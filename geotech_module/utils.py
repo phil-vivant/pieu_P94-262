@@ -226,7 +226,7 @@ def build_pile(
         idx +=1
 
     # Création de la barre
-    pile_model.add_member(name='pile', i_node=first_node, j_node=last_node, material_name='pile_material', Iy=Iy, Iz=Iz, J=J, A=A)
+    pile_model.add_member(name='pile', i_node=first_node, j_node=last_node, material='pile_material', Iy=Iy, Iz=Iz, J=J, A=A)
 
     # Création des cas de charges
     pile_model.add_member_pt_load(Member='pile', Direction='Fy', P=horizontal_force, x=0.)

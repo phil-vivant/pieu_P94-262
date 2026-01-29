@@ -1,1 +1,2 @@
 pfse_starterkit
+Pynite==2.2.0
