@@ -75,6 +75,8 @@ st.divider()
 st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
 st.divider()
 
+persistence_ui()
+
 # Pieu
 st.sidebar.title('Définition du pieu')
 level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", value=0.0, key="pile_top")
