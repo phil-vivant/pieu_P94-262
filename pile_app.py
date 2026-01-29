@@ -380,7 +380,7 @@ if tog_equ == True:
 
 st.divider()
 
-st.subheader('Comportement transversal de la fondation')
+st.subheader('Comportement transversal de la fondation  ⚠️ En cours !')
 
 # Données complémentaires
 with st.expander("Données :"):
