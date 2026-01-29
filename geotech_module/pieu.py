@@ -10,7 +10,7 @@ from geotech_module.soil import Soil
 
 TAB_A1 = {
     '1' : {'Classe': 1, 'Abreviation': 'FS',           'Descriptif': 'Foré simple (pieux et barrettes)'},
-    '2' : {'Classe': 1, 'Abreviation': 'FB',           'Descriptif': 'Foré boue (pieux et barrettes'},
+    '2' : {'Classe': 1, 'Abreviation': 'FB',           'Descriptif': 'Foré boue (pieux et barrettes)'},
     '3' : {'Classe': 1, 'Abreviation': 'FTP',          'Descriptif': 'Foré tubé (virole perdue)'},
     '4' : {'Classe': 1, 'Abreviation': 'FTR',          'Descriptif': 'Foré tubé (virole récupérée)'},
     '5' : {'Classe': 1, 'Abreviation': 'FSR, FBR, PU', 'Descriptif': 'Foré simple ou boue avec rainurage ou puits'},
