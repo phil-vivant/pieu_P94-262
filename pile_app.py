@@ -1,4 +1,6 @@
 import math
+import json
+from datetime import datetime
 import streamlit as st
 import plotly.graph_objects as go
 
@@ -7,34 +9,96 @@ from geotech_module.soil import Soil
 import geotech_module.utils as utils
 
 
+APP_STATE_KEYS = [
+    # Pieu
+    "pile_top", "pile_bot", "pile_cat", "pile_Eb", "pile_dp", "pile_ds", "pile_int",
+
+    # Lithologie
+    "soil_nb_layers",
+
+    # Sol A
+    "soil_a_name", "soil_a_zsup", "soil_a_zinf", "soil_a_curve", "soil_a_pf", "soil_a_pl", "soil_a_Em", "soil_a_alpha",
+
+    # Sol B
+    "soil_b_name", "soil_b_zsup", "soil_b_zinf", "soil_b_curve", "soil_b_pf", "soil_b_pl", "soil_b_Em", "soil_b_alpha",
+
+    # Sol C
+    "soil_c_name", "soil_c_zsup", "soil_c_zinf", "soil_c_curve", "soil_c_pf", "soil_c_pl", "soil_c_Em", "soil_c_alpha",
+
+    # Sol D
+    "soil_d_name", "soil_d_zsup", "soil_d_zinf", "soil_d_curve", "soil_d_pf", "soil_d_pl", "soil_d_Em", "soil_d_alpha",
+
+    # Toggles / actions
+    "tog_tass",
+    "tog_equ", "q_target",
+
+    # Transversal
+    "trans_Eb", "trans_largeur", "trans_inertia", "trans_force", "trans_bending", "trans_situation",
+    "tog_transversal",
+]
+
+
+
+def export_state(keys):
+    return {k: st.session_state.get(k) for k in keys if k in st.session_state}
+
+def import_state(payload, keys):
+    for k in keys:
+        if k in payload:
+            st.session_state[k] = payload[k]
+
+def persistence_ui(keys=APP_STATE_KEYS):
+    with st.sidebar.expander("💾 Sauvegarde / Chargement", expanded=False):
+        name = st.text_input("Nom du cas", value="cas_pieu", key="case_name")
+
+        # Sauvegarde
+        data = export_state(keys)
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        st.download_button(
+            "⬇️ Sauver (.json)",
+            data=json.dumps(data, ensure_ascii=False, indent=2),
+            file_name=f"{name}_{stamp}.json",
+            mime="application/json",
+            use_container_width=True,
+        )
+
+        # Chargement
+        up = st.file_uploader("⬆️ Charger (.json)", type=["json"])
+        if up is not None:
+            payload = json.load(up)
+            import_state(payload, keys)
+            st.success("Paramètres chargés ✅")
+            st.rerun()
+
+
 st.divider()
 st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
 st.divider()
 
 # Pieu
 st.sidebar.title('Définition du pieu')
-level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", value=0.0)
-level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", value=-14.0)
-categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", value=19)
-Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", value=210_000)
-pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", value=46.3)
-pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", value=88.9)
-interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=200)
+level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", value=0.0, key="pile_top")
+level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", value=-14.0, key="pile_bot")
+categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", value=19, key="pile_cat")
+Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", value=210_000, key="pile_Eb")
+pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", value=46.3, key="pile_dp")
+pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", value=88.9, key="pile_ds")
+interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=200, key="pile_int")
 
 st.subheader('Lithologie')
-nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 4) :", value = 4)
+nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 4) :", value = 4, key="soil_nb_layers")
 couches_sols = []
 
 # Sol A
 with st.expander("Couche de sol 'A'"):
-    sol_a_name = st.text_input("Sol 'A' - Descriptif de la couche de sol :")
-    sol_a_level_sup = st.number_input("Sol 'A' - Niveau supérieur de la couche de sol :", value=0.0)
-    sol_a_level_inf = st.number_input("Sol 'A' - Niveau inférieur de la couche de sol :", value=-1.0)
-    sol_a_courbe_frottement = st.selectbox("Sol 'A' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'])
-    sol_a_pf = st.number_input("Sol 'A' - Pression de fluage moyenne [MPa] :", value=0.0)
-    sol_a_pl = st.number_input("Sol 'A' - Pression limite moyenne [MPa] :", value=0.0)
-    sol_a_Em = st.number_input("Sol 'A' - Module pressiométrique moyen [MPa] :", value=5.0)
-    sol_a_alpha = st.number_input("Sol 'A' - Coefficient alpha - suivant étude géotechnique :", value=0.67)
+    sol_a_name = st.text_input("Sol 'A' - Descriptif de la couche de sol :", key="soil_a_name")
+    sol_a_level_sup = st.number_input("Sol 'A' - Niveau supérieur de la couche de sol :", value=0.0, key="soil_a_zsup")
+    sol_a_level_inf = st.number_input("Sol 'A' - Niveau inférieur de la couche de sol :", value=-1.0, key="soil_a_zinf")
+    sol_a_courbe_frottement = st.selectbox("Sol 'A' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_a_curve")
+    sol_a_pf = st.number_input("Sol 'A' - Pression de fluage moyenne [MPa] :", value=0.0, key="soil_a_pf")
+    sol_a_pl = st.number_input("Sol 'A' - Pression limite moyenne [MPa] :", value=0.0, key="soil_a_pl")
+    sol_a_Em = st.number_input("Sol 'A' - Module pressiométrique moyen [MPa] :", value=5.0, key="soil_a_Em")
+    sol_a_alpha = st.number_input("Sol 'A' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_a_alpha")
 
     sol_A = Soil(
         name=sol_a_name,
@@ -177,7 +241,7 @@ with colB:
 st.divider()
 
 st.subheader('Courbe de tassement du pieu')
-tog_tass = st.toggle("tracer la courbe de tassement")
+tog_tass = st.toggle("tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
     tassement = pieu.settlement_curve()
@@ -209,10 +273,10 @@ st.divider()
 
 st.subheader('Equilibre pour un chargement vertical donné')
 
-tog_equ = st.toggle("Recherche de l'équilibre")
+tog_equ = st.toggle("Recherche de l'équilibre", key="tog_equ")
 if tog_equ == True:
     resistance_maxi = math.floor(1000 * pieu.resistance_totale)
-    q_target = st.slider("Charge verticale en tête de pieu [kN] :", min_value=0, max_value=resistance_maxi, value=380)
+    q_target = st.slider("Charge verticale en tête de pieu [kN] :", min_value=0, max_value=resistance_maxi, value=380, key="q_target")
 
     equilibre = pieu.equilibre_Q_top(q_target / 1000)
     z_acc = []
@@ -318,14 +382,14 @@ st.subheader('Comportement transversal de la fondation')
 
 # Données complémentaires
 with st.expander("Données :"):
-    Eb = st.number_input("Module d'Young du pieu [MPa] :", value=20_000)
-    largeur = st.number_input("Largeur perpendiculaire au sens de déplacement [m] :", value=0.250)
-    inertia = st.number_input("Moment d'inertie du pieu [m4] :", value=0.001)
-    force = st.number_input("Force horizontale en tête de pieu [kN] :", value=0.0)
-    bending = st.number_input("Moment fléchissant en tête de pieu [kN.m] :", value=0.0)
-    comb_situation = st.selectbox("Situation :", ['court terme', 'long terme', 'ELU', 'sismique'])
+    Eb_trans = st.number_input("Module d'Young du pieu [MPa] :", value=20_000, key="trans_Eb")
+    largeur = st.number_input("Largeur perpendiculaire au sens de déplacement [m] :", value=0.250, key="trans_largeur")
+    inertia = st.number_input("Moment d'inertie du pieu [m4] :", value=0.001, key="trans_inertia")
+    force = st.number_input("Force horizontale en tête de pieu [kN] :", value=0.0, key="trans_force")
+    bending = st.number_input("Moment fléchissant en tête de pieu [kN.m] :", value=0.0, key="trans_bending")
+    comb_situation = st.selectbox("Situation :", ['court terme', 'long terme', 'ELU', 'sismique'], key="trans_situation")
 
-tog_transversal = st.toggle("Lancer le calcul")
+tog_transversal = st.toggle("Lancer le calcul", key="tog_transversal")
 if tog_transversal == True:
     situation = str(comb_situation)
     horizontal_force = force / 1000
