@@ -128,14 +128,14 @@ with st.expander("Couche de sol 'A'"):
 
 if nb_couches >=2:
     with st.expander("Couche de sol 'B'"):
-        sol_b_name = st.text_input("Sol 'B' - Descriptif de la couche de sol :")
-        sol_b_level_sup = st.number_input("Sol 'B' - Niveau supérieur de la couche de sol :", value=sol_a_level_inf)
-        sol_b_level_inf = st.number_input("Sol 'B' - Niveau inférieur de la couche de sol :", value=-8.0)
-        sol_b_courbe_frottement = st.selectbox("Sol 'B' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'])
-        sol_b_pf = st.number_input("Sol 'B' - Pression de fluage moyenne [MPa] :", value=0.8)
-        sol_b_pl = st.number_input("Sol 'B' - Pression limite moyenne [MPa] :", value=1.2)
-        sol_b_Em = st.number_input("Sol 'B' - Module pressiométrique moyen [MPa] :", value=8.0)
-        sol_b_alpha = st.number_input("Sol 'B' - Coefficient alpha - suivant étude géotechnique :", value=0.67)
+        sol_b_name = st.text_input("Sol 'B' - Descriptif de la couche de sol :", key="soil_b_name")
+        sol_b_level_sup = st.number_input("Sol 'B' - Niveau supérieur de la couche de sol :", value=sol_a_level_inf, key="soil_b_zsup")
+        sol_b_level_inf = st.number_input("Sol 'B' - Niveau inférieur de la couche de sol :", value=-8.0, key="soil_b_zinf")
+        sol_b_courbe_frottement = st.selectbox("Sol 'B' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_b_curve")
+        sol_b_pf = st.number_input("Sol 'B' - Pression de fluage moyenne [MPa] :", value=0.8, key="soil_b_pf")
+        sol_b_pl = st.number_input("Sol 'B' - Pression limite moyenne [MPa] :", value=1.2, key="soil_b_pl")
+        sol_b_Em = st.number_input("Sol 'B' - Module pressiométrique moyen [MPa] :", value=8.0, key="soil_b_Em")
+        sol_b_alpha = st.number_input("Sol 'B' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_b_alpha")
 
         sol_B = Soil(
             name=sol_b_name,
@@ -151,14 +151,14 @@ if nb_couches >=2:
 
 if nb_couches >=3:
     with st.expander("Couche de sol 'C'"):
-        sol_c_name = st.text_input("Sol 'C' - Descriptif de la couche de sol :")
-        sol_c_level_sup = st.number_input("Sol 'C' - Niveau supérieur de la couche de sol :", value=sol_b_level_inf)
-        sol_c_level_inf = st.number_input("Sol 'C' - Niveau inférieur de la couche de sol :", value=-12.0)
-        sol_c_courbe_frottement = st.selectbox("Sol 'C' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'])
-        sol_c_pf = st.number_input("Sol 'C' - Pression de fluage moyenne [MPa] :", value=0.6)
-        sol_c_pl = st.number_input("Sol 'C' - Pression limite moyenne [MPa] :", value=0.8)
-        sol_c_Em = st.number_input("Sol 'C' - Module pressiométrique moyen [MPa] :", value=6.0)
-        sol_c_alpha = st.number_input("Sol 'C' - Coefficient alpha - suivant étude géotechnique :", value=0.67)
+        sol_c_name = st.text_input("Sol 'C' - Descriptif de la couche de sol :", key="soil_c_name")
+        sol_c_level_sup = st.number_input("Sol 'C' - Niveau supérieur de la couche de sol :", value=sol_b_level_inf, key="soil_c_zsup")
+        sol_c_level_inf = st.number_input("Sol 'C' - Niveau inférieur de la couche de sol :", value=-12.0, key="soil_c_zinf")
+        sol_c_courbe_frottement = st.selectbox("Sol 'C' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_c_curve")
+        sol_c_pf = st.number_input("Sol 'C' - Pression de fluage moyenne [MPa] :", value=0.6, key="soil_c_pf")
+        sol_c_pl = st.number_input("Sol 'C' - Pression limite moyenne [MPa] :", value=0.8, key="soil_c_pl")
+        sol_c_Em = st.number_input("Sol 'C' - Module pressiométrique moyen [MPa] :", value=6.0, key="soil_c_Em")
+        sol_c_alpha = st.number_input("Sol 'C' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_c_alpha")
 
         sol_C = Soil(
             name=sol_c_name,
@@ -174,14 +174,14 @@ if nb_couches >=3:
 
 if nb_couches >=4:
     with st.expander("Couche de sol 'D'"):
-        sol_d_name = st.text_input("Sol 'D' - Descriptif de la couche de sol :")
-        sol_d_level_sup = st.number_input("Sol 'D' - Niveau supérieur de la couche de sol :", value=sol_c_level_inf)
-        sol_d_level_inf = st.number_input("Sol 'D' - Niveau inférieur de la couche de sol :", value=-20.0)
-        sol_d_courbe_frottement = st.selectbox("Sol 'D' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'])
-        sol_d_pf = st.number_input("Sol 'D' - Pression de fluage moyenne [MPa] :", value=1.3)
-        sol_d_pl = st.number_input("Sol 'D' - Pression limite moyenne [MPa] :", value=1.8)
-        sol_d_Em = st.number_input("Sol 'D' - Module pressiométrique moyen [MPa] :", value=10.0)
-        sol_d_alpha = st.number_input("Sol 'D' - Coefficient alpha - suivant étude géotechnique :", value=0.67)
+        sol_d_name = st.text_input("Sol 'D' - Descriptif de la couche de sol :", key="soil_d_name")
+        sol_d_level_sup = st.number_input("Sol 'D' - Niveau supérieur de la couche de sol :", value=sol_c_level_inf, key="soil_d_zsup")
+        sol_d_level_inf = st.number_input("Sol 'D' - Niveau inférieur de la couche de sol :", value=-20.0, key="soil_d_zinf")
+        sol_d_courbe_frottement = st.selectbox("Sol 'D' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_d_curve")
+        sol_d_pf = st.number_input("Sol 'D' - Pression de fluage moyenne [MPa] :", value=1.3, key="soil_d_pf")
+        sol_d_pl = st.number_input("Sol 'D' - Pression limite moyenne [MPa] :", value=1.8, key="soil_d_pl")
+        sol_d_Em = st.number_input("Sol 'D' - Module pressiométrique moyen [MPa] :", value=10.0, key="soil_d_Em")
+        sol_d_alpha = st.number_input("Sol 'D' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_d_alpha")
 
         sol_D = Soil(
             name=sol_d_name,
