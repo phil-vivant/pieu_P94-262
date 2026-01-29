@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 import streamlit as st
 import plotly.graph_objects as go
+import hashlib
 
 from geotech_module.pieu import Pile
 from geotech_module.soil import Soil
@@ -62,26 +63,33 @@ def persistence_ui(keys=APP_STATE_KEYS):
             use_container_width=True,
         )
 
-        # Chargement
+        # --- Chargement ---
+        # Si un run précédent a demandé à "vider" l'uploader, on le fait AVANT d'instancier le widget
+        if st.session_state.get("_clear_state_file", False):
+            st.session_state.pop("state_file", None)
+            st.session_state["_clear_state_file"] = False
+
         up = st.file_uploader("⬆️ Charger (.json)", type=["json"], key="state_file")
-        # if up is not None:
-        #     payload = json.load(up)
-        #     import_state(payload, keys)
-        #     st.success("Paramètres chargés ✅")
-        #     st.rerun()
-        if st.button("✅ Appliquer le fichier", use_container_width=True, key="apply_state"):
-            try:
-                payload = json.load(up)
-                import_state(payload, keys)
 
-                # vider l’uploader pour éviter de recharger en boucle
-                st.session_state["state_file"] = None
+        if up is not None:
+            if st.button("✅ Appliquer le fichier", use_container_width=True, key="apply_state"):
+                try:
+                    file_bytes = up.getvalue()
+                    file_hash = hashlib.sha256(file_bytes).hexdigest()
 
-                # Message hors sidebar
-                st.toast("Paramètres chargés ✅")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Fichier invalide : {e}")
+                    payload = json.loads(file_bytes.decode("utf-8"))
+                    import_state(payload, keys)
+
+                    # Mémorise que ce fichier a été chargé (optionnel mais utile)
+                    st.session_state["_last_loaded_hash"] = file_hash
+
+                    # IMPORTANT : on demandera à vider l'uploader AU PROCHAIN run
+                    st.session_state["_clear_state_file"] = True
+
+                    st.toast("Paramètres chargés ✅")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Fichier invalide : {e}")
 
 st.divider()
 st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
