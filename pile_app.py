@@ -63,13 +63,25 @@ def persistence_ui(keys=APP_STATE_KEYS):
         )
 
         # Chargement
-        up = st.file_uploader("⬆️ Charger (.json)", type=["json"])
-        if up is not None:
-            payload = json.load(up)
-            import_state(payload, keys)
-            st.success("Paramètres chargés ✅")
-            st.rerun()
+        up = st.file_uploader("⬆️ Charger (.json)", type=["json"], key="state_file")
+        # if up is not None:
+        #     payload = json.load(up)
+        #     import_state(payload, keys)
+        #     st.success("Paramètres chargés ✅")
+        #     st.rerun()
+        if st.button("✅ Appliquer le fichier", use_container_width=True, key="apply_state"):
+            try:
+                payload = json.load(up)
+                import_state(payload, keys)
 
+                # vider l’uploader pour éviter de recharger en boucle
+                st.session_state["state_file"] = None
+
+                # Message hors sidebar
+                st.toast("Paramètres chargés ✅")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Fichier invalide : {e}")
 
 st.divider()
 st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
