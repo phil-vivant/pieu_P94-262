@@ -1,2 +1,2 @@
 pfse_starterkit
-Pynite==2.2.0
+PyNiteFEA==2.2.1
