@@ -285,7 +285,7 @@ if tog_tass == True:
         name="Column B"
         )
     )
-    fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262"
+    fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
     fig.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
     fig.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
 
@@ -293,7 +293,7 @@ if tog_tass == True:
 
 st.divider()
 
-st.subheader('Equilibre pour un chargement vertical donné')
+st.subheader('Équilibre pour un chargement vertical donné')
 
 tog_equ = st.toggle("Recherche de l'équilibre", key="tog_equ")
 if tog_equ == True:
