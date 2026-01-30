@@ -685,7 +685,7 @@ class Pile:
             - en ordonnée:  le tassement en tête du pieu
         """
         if Qmax is None:
-            Qmax = self.resistance_totale - 0.0001
+            Qmax = self.portance_ELU_Acc * 1.1
         if nb_pas is None:
             nb_pas = 20
         Qi = 1/2 * Qmax / nb_pas
