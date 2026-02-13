@@ -29,6 +29,9 @@ APP_STATE_KEYS = [
     # Sol D
     "soil_d_name", "soil_d_zsup", "soil_d_zinf", "soil_d_curve", "soil_d_pf", "soil_d_pl", "soil_d_Em", "soil_d_alpha", "soil_d_type",
 
+    # Sol E
+    "soil_e_name", "soil_e_zsup", "soil_e_zinf", "soil_e_curve", "soil_e_pf", "soil_e_pl", "soil_e_Em", "soil_e_alpha", "soil_e_type",
+
     # Toggles / actions
     "tog_tass",
     "tog_equ", "q_target",
@@ -108,7 +111,7 @@ pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottem
 interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=200, key="pile_int")
 
 st.subheader('Lithologie')
-nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 4) :", value = 4, key="soil_nb_layers")
+nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 5) :", value = 5, key="soil_nb_layers")
 couches_sols = []
 
 # Sol A
@@ -210,6 +213,31 @@ if nb_couches >=4:
             soil_type=sol_d_type,
         )
     couches_sols.append(sol_D)
+
+if nb_couches >=5:
+    with st.expander("Couche de sol 'E'"):
+        sol_e_name = st.text_input("Sol 'E' - Descriptif de la couche de sol :", key="soil_e_name")
+        sol_e_level_sup = st.number_input("Sol 'E' - Niveau supérieur de la couche de sol :", value=sol_c_level_inf, key="soil_e_zsup")
+        sol_e_level_inf = st.number_input("Sol 'E' - Niveau inférieur de la couche de sol :", value=-20.0, key="soil_e_zinf")
+        sol_e_courbe_frottement = st.selectbox("Sol 'E' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_e_curve")
+        sol_e_pf = st.number_input("Sol 'E' - Pression de fluage moyenne [MPa] :", value=1.3, key="soil_e_pf")
+        sol_e_pl = st.number_input("Sol 'E' - Pression limite moyenne [MPa] :", value=1.8, key="soil_e_pl")
+        sol_e_Em = st.number_input("Sol 'E' - Module pressiométrique moyen [MPa] :", value=10.0, key="soil_e_Em")
+        sol_e_alpha = st.number_input("Sol 'E' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_e_alpha")
+        sol_e_type = st.selectbox("Sol 'E' - Type de sol :", ['granulaire', 'fin'], key="soil_e_type")
+
+        sol_E = Soil(
+            name=sol_e_name,
+            level_sup=sol_d_level_sup,
+            level_inf=sol_e_level_inf,
+            courbe_frottement=sol_e_courbe_frottement,
+            pf=sol_e_pf,
+            pl=sol_e_pl,
+            Em=sol_e_Em,
+            alpha=sol_e_alpha,
+            soil_type=sol_e_type,
+        )
+    couches_sols.append(sol_E)
 
 st.divider()
 
