@@ -26,7 +26,7 @@ TAB_A1 = {
     '15': {'Classe': 6, 'Abreviation': 'HBi',          'Descriptif': 'Profilé H battu injecté'},
     '16': {'Classe': 7, 'Abreviation': 'PP',           'Descriptif': 'Palplanches battues'},
     '17': {'Classe': 1, 'Abreviation': 'M1',           'Descriptif': 'Micropieu type I'},
-    '18': {'Classe': 1, 'Abreviation': 'M3',           'Descriptif': 'Micropieu type II'},
+    '18': {'Classe': 1, 'Abreviation': 'M2',           'Descriptif': 'Micropieu type II'},
     '19': {'Classe': 8, 'Abreviation': 'PIGU, MIGU',   'Descriptif': 'Pieu ou micropieu injecté mode IGU - Type III'},
     '20': {'Classe': 8, 'Abreviation': 'PIRS, MIRS',   'Descriptif': 'Pieu ou micropieu injecté mode IRS - Type IV'},
 }
