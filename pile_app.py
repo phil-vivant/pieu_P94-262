@@ -146,7 +146,7 @@ if nb_couches >=2:
         sol_b_pl = st.number_input("Sol 'B' - Pression limite moyenne [MPa] :", value=1.2, key="soil_b_pl")
         sol_b_Em = st.number_input("Sol 'B' - Module pressiométrique moyen [MPa] :", value=8.0, key="soil_b_Em")
         sol_b_alpha = st.number_input("Sol 'B' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_b_alpha")
-        sol_b_type = st.selectbox("Sol 'C' - Type de sol :", ['granulaire', 'fin'], key="soil_b_type")
+        sol_b_type = st.selectbox("Sol 'B' - Type de sol :", ['granulaire', 'fin'], key="soil_b_type")
 
         sol_B = Soil(
             name=sol_b_name,
@@ -206,7 +206,6 @@ if nb_couches >=4:
             pf=sol_d_pf,
             pl=sol_d_pl,
             Em=sol_d_Em,
-            alpha=sol_d_alpha
             alpha=sol_d_alpha,
             soil_type=sol_d_type,
         )
