@@ -32,28 +32,54 @@ TAB_A1 = {
 }
 
 
-TAB_F21 = {
-    '1' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '2' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '3' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '4' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '5' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '6' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '7' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '8' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '9' : {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '10': {'gamma_rd1_comp': 2.0, 'gamma_rd1_trac': 2.0, 'gamma_rd2': 1.1},
-    '11': {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '12': {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '13': {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '14': {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '15': {'gamma_rd1_comp': 2.0, 'gamma_rd1_trac': 2.0, 'gamma_rd2': 1.1},
-    '16': {'gamma_rd1_comp': 1.4, 'gamma_rd1_trac': 1.7, 'gamma_rd2': 1.1},
-    '17': {'gamma_rd1_comp': 2.0, 'gamma_rd1_trac': 2.0, 'gamma_rd2': 1.1},
-    '18': {'gamma_rd1_comp': 2.0, 'gamma_rd1_trac': 2.0, 'gamma_rd2': 1.1},
-    '19': {'gamma_rd1_comp': 2.0, 'gamma_rd1_trac': 2.0, 'gamma_rd2': 1.1},
-    '20': {'gamma_rd1_comp': 2.0, 'gamma_rd1_trac': 2.0, 'gamma_rd2': 1.1},
+TAB_GAMMA_RD1_COMP = {
+    '1' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '2' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '3' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '4' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '5' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '6' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '7' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '8' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '9' : {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '10': {'Q1': 2.00, 'Q2': 1.40, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.40},
+    '11': {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '12': {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '13': {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '14': {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '15': {'Q1': 2.00, 'Q2': 1.40, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.40},
+    '16': {'Q1': 1.15, 'Q2': 1.15, 'Q3': 1.40, 'Q4': 1.15, 'Q5': 1.15},
+    '17': {'Q1': 2.00, 'Q2': 1.40, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.40},
+    '18': {'Q1': 2.00, 'Q2': 1.40, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.40},
+    '19': {'Q1': 2.00, 'Q2': 1.40, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.40},
+    '20': {'Q1': 2.00, 'Q2': 1.40, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.40},
 }
+
+
+TAB_GAMMA_RD1_TRAC = {
+    '1' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '2' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '3' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '4' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '5' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '6' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '7' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '8' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '9' : {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '10': {'Q1': 2.00, 'Q2': 1.70, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.70},
+    '11': {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '12': {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '13': {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '14': {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '15': {'Q1': 2.00, 'Q2': 1.70, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.70},
+    '16': {'Q1': 1.40, 'Q2': 1.40, 'Q3': 1.70, 'Q4': 1.40, 'Q5': 1.40},
+    '17': {'Q1': 2.00, 'Q2': 1.70, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.70},
+    '18': {'Q1': 2.00, 'Q2': 1.70, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.70},
+    '19': {'Q1': 2.00, 'Q2': 1.70, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.70},
+    '20': {'Q1': 2.00, 'Q2': 1.70, 'Q3': 2.00, 'Q4': 2.00, 'Q5': 1.70},
+}
+
+GAMMA_RD2 = 1.1
 
 
 @dataclass
@@ -381,21 +407,25 @@ class Pile:
         """
         Returns the partial coefficient gamma_rd1_comp.
         """
-        return TAB_F21[str(self.category)]['gamma_rd1_comp']
+        soil_at_pile_end = self.get_soil_from_level(self.level_bott)
+        courbe = soil_at_pile_end.courbe_frottement
+        return TAB_GAMMA_RD1_COMP[str(self.category)][courbe]
 
     @property
     def gamma_rd1_trac(self):
         """
         Returns the partial coefficient gamma_rd1_trac.
         """
-        return TAB_F21[str(self.category)]['gamma_rd1_trac']
+        soil_at_pile_end = self.get_soil_from_level(self.level_bott)
+        courbe = soil_at_pile_end.courbe_frottement
+        return TAB_GAMMA_RD1_TRAC[str(self.category)][courbe]
 
     @property
     def gamma_rd2(self):
         """
         Returns the partial coefficient gamma_rd2.
         """
-        return TAB_F21[str(self.category)]['gamma_rd2']
+        return GAMMA_RD2
 
     @property
     def portance_fluage_car(self, coeff_Rb: float=0.5, coeff_Rs: float=0.7) -> float:
