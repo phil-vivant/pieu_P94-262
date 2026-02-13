@@ -121,6 +121,7 @@ with st.expander("Couche de sol 'A'"):
     sol_a_pl = st.number_input("Sol 'A' - Pression limite moyenne [MPa] :", value=0.0, key="soil_a_pl")
     sol_a_Em = st.number_input("Sol 'A' - Module pressiométrique moyen [MPa] :", value=5.0, key="soil_a_Em")
     sol_a_alpha = st.number_input("Sol 'A' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_a_alpha")
+    sol_a_type = st.number_input("Sol 'A' - Type de sol :", ['fin', 'granulaire'], key="soil_a_type")
 
     sol_A = Soil(
         name=sol_a_name,
@@ -130,7 +131,8 @@ with st.expander("Couche de sol 'A'"):
         pf=sol_a_pf,
         pl=sol_a_pl,
         Em=sol_a_Em,
-        alpha=sol_a_alpha
+        alpha=sol_a_alpha,
+        soil_type=sol_a_type,
     )
     couches_sols.append(sol_A)
 
