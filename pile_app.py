@@ -54,7 +54,7 @@ def persistence_ui(keys=APP_STATE_KEYS):
 
         # Sauvegarde
         data = export_state(keys)
-        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        stamp = datetime.now().strftime("%Y-%m-%d - %Hh%Mmin%Ss")
         st.download_button(
             "⬇️ Sauver (.json)",
             data=json.dumps(data, ensure_ascii=False, indent=2),
