@@ -18,16 +18,16 @@ APP_STATE_KEYS = [
     "soil_nb_layers",
 
     # Sol A
-    "soil_a_name", "soil_a_zsup", "soil_a_zinf", "soil_a_curve", "soil_a_pf", "soil_a_pl", "soil_a_Em", "soil_a_alpha",
+    "soil_a_name", "soil_a_zsup", "soil_a_zinf", "soil_a_curve", "soil_a_pf", "soil_a_pl", "soil_a_Em", "soil_a_alpha", "soil_a_type"
 
     # Sol B
-    "soil_b_name", "soil_b_zsup", "soil_b_zinf", "soil_b_curve", "soil_b_pf", "soil_b_pl", "soil_b_Em", "soil_b_alpha",
+    "soil_b_name", "soil_b_zsup", "soil_b_zinf", "soil_b_curve", "soil_b_pf", "soil_b_pl", "soil_b_Em", "soil_b_alpha", "soil_b_type"
 
     # Sol C
-    "soil_c_name", "soil_c_zsup", "soil_c_zinf", "soil_c_curve", "soil_c_pf", "soil_c_pl", "soil_c_Em", "soil_c_alpha",
+    "soil_c_name", "soil_c_zsup", "soil_c_zinf", "soil_c_curve", "soil_c_pf", "soil_c_pl", "soil_c_Em", "soil_c_alpha",, "soil_c_type"
 
     # Sol D
-    "soil_d_name", "soil_d_zsup", "soil_d_zinf", "soil_d_curve", "soil_d_pf", "soil_d_pl", "soil_d_Em", "soil_d_alpha",
+    "soil_d_name", "soil_d_zsup", "soil_d_zinf", "soil_d_curve", "soil_d_pf", "soil_d_pl", "soil_d_Em", "soil_d_alpha", "soil_d_type"
 
     # Toggles / actions
     "tog_tass",
