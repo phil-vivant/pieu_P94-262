@@ -940,6 +940,7 @@ class Pile:
                 Qi = Qmin + i * (Qmax - Qmin) / nb_pas
         return dz_acc, effort_acc
 
+
     @property
     def data_for_fe_model(self):
         """

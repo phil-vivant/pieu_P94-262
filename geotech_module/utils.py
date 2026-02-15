@@ -5,7 +5,7 @@ from PyNite import FEModel3D
 
 def max_list(list_of_float: list[float]) -> float:
     """
-    Returns the minimum value in a list
+    Returns the maximum value in a list
     """
     maximum = -1 * math.inf
     for element in list_of_float:
@@ -120,26 +120,37 @@ def get_node_name_at_location(nodes: dict, location: float) -> str:
 
 def skin_friction_law(s: float, qs: float, ks: float) -> float:
     """
-    Loi de mobilisation du frottement latéral en fonction du déplacement vertical, proposée par Franc et Zhao - 1982
-    Lateral skin friction mobilisation, relative to the vertical displacement, proposed by Franc et Zhao - 1982
+    Loi de mobilisation du frottement latéral en fonction du déplacement vertical,
+    proposée par Franc et Zhao - 1982
+    La loi est symétrique (positive / négative).
+    Lateral skin friction mobilisation, relative to the vertical displacement,
+    proposed by Franc et Zhao - 1982
     """
-    return tri_linear_law(s, qs/2, ks, qs, ks/5)
+    return np.sign(s) * tri_linear_law(abs(s), qs/2, ks, qs, ks/5)
 
 
 def end_bearing_law(s: float, qp: float, kp: float) -> float:
     """
-    Loi de mobilisation de l'effort de pointe en fonction du déplacement vertical, proposée par Franc et Zhao - 1982
-    End-bearing resistance mobilisation, relative to the vertical displacement, proposed by Franc et Zhao - 1982
+    Loi de mobilisation de l'effort de pointe en fonction du déplacement vertical,
+    proposée par Franc et Zhao - 1982
+    La loi renvoie 0 pour un déplacement négatif.
+    End-bearing resistance mobilisation, relative to the vertical displacement,
+    proposed by Franc et Zhao - 1982
     """
     return tri_linear_law(s, qp/2, kp, qp, kp/5)
 
 
-def tri_linear_law(s: float, q1: float, k1: float, q2: float|None=None, k2: float|None=None) -> float:
+def tri_linear_law(
+        s: float, q1: float, k1: float, q2: float|None=None, k2: float|None=None
+) -> float:
     """
-    Loi de comportement tri-linéaire proposée par Franc et Zhao - 1982 et recommandée par la NF P94-262.
-    Remarque: il est possible d'obtenir une loi bi-linéaire. Il suffit pour cela de ne pas renseigner q2 et k2.
-    Tri-linear behavior law proposed by Franc and Zhao - 1982 and recommended by NF P94-262.
-    Note: it is possible to obtain a bi-linear law. Simply leave q2 and k2 blank.
+    Loi de comportement du type tri-linéaire. Elle est par exemple utilisée par
+    Franc et Zhao - 1982 et recommandée par la NF P94-262.
+    Remarque: il est possible d'obtenir une loi bi-linéaire. Il suffit pour cela
+    de ne pas renseigner q2 et k2.
+    Tri-linear behavior law proposed by Franc and Zhao - 1982 and recommended by
+    NF P94-262.
+    Note: it is possible to get a bi-linear law. Simply leave q2 and k2 blank.
     """
     try:
         s1 = q1 / k1

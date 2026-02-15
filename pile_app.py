@@ -343,25 +343,6 @@ if tog_equ == True:
         key="q_target"
     )
 
-    # equilibre = pieu.equilibre_Q_top(q_target / 1000)
-    # z_acc = []
-    # Q_acc = []
-    # Q_sol = []
-    # dz_acc = []
-    # dz_sol = []
-    # qs_acc = []
-    # qs_lim = []
-    # qs_max = -math.inf
-    # for slice in equilibre[3]:
-    #     z_acc.append(slice.z_top)
-    #     Q_acc.append(slice.Q_top * 1000)
-    #     Q_sol.append(q_target - slice.Q_top * 1000)
-    #     dz_acc.append(slice.dz_middle * 1000)
-    #     dz_sol.append(0)
-    #     qs_acc.append(slice.qs * 1000)
-    #     qs_lim.append(slice.qs_lim * 1000)
-    #     qs_max = max(qs_max, slice.qs)
-
     equilibre = pieu.equilibre_top_down_Qtete(q_target / 1000)
     z_acc = []
     Q_acc = []
