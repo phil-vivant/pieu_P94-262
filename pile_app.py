@@ -333,10 +333,36 @@ st.subheader('Équilibre pour un chargement vertical donné')
 
 tog_equ = st.toggle("Recherche de l'équilibre", key="tog_equ")
 if tog_equ == True:
+    resistance_mini = math.floor(-1000 * pieu.resistance_skin_friction)
     resistance_maxi = math.floor(1000 * pieu.resistance_totale)
-    q_target = st.slider("Charge verticale en tête de pieu [kN] :", min_value=0, max_value=resistance_maxi, value=380, key="q_target")
+    q_target = st.slider(
+        "Charge verticale en tête de pieu [kN] :",
+        min_value=resistance_mini,
+        max_value=resistance_maxi,
+        value=380,
+        key="q_target"
+    )
 
-    equilibre = pieu.equilibre_Q_top(q_target / 1000)
+    # equilibre = pieu.equilibre_Q_top(q_target / 1000)
+    # z_acc = []
+    # Q_acc = []
+    # Q_sol = []
+    # dz_acc = []
+    # dz_sol = []
+    # qs_acc = []
+    # qs_lim = []
+    # qs_max = -math.inf
+    # for slice in equilibre[3]:
+    #     z_acc.append(slice.z_top)
+    #     Q_acc.append(slice.Q_top * 1000)
+    #     Q_sol.append(q_target - slice.Q_top * 1000)
+    #     dz_acc.append(slice.dz_middle * 1000)
+    #     dz_sol.append(0)
+    #     qs_acc.append(slice.qs * 1000)
+    #     qs_lim.append(slice.qs_lim * 1000)
+    #     qs_max = max(qs_max, slice.qs)
+
+    equilibre = pieu.equilibre_top_down_Qtete(q_target / 1000)
     z_acc = []
     Q_acc = []
     Q_sol = []
@@ -345,7 +371,7 @@ if tog_equ == True:
     qs_acc = []
     qs_lim = []
     qs_max = -math.inf
-    for slice in equilibre[3]:
+    for slice in equilibre[2]:
         z_acc.append(slice.z_top)
         Q_acc.append(slice.Q_top * 1000)
         Q_sol.append(q_target - slice.Q_top * 1000)
