@@ -111,7 +111,7 @@ pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottem
 interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=200, key="pile_int")
 
 st.subheader('Lithologie')
-nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 5) :", value = 5, key="soil_nb_layers")
+nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 5) :", value = 4, key="soil_nb_layers")
 couches_sols = []
 
 # Sol A
