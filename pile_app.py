@@ -217,8 +217,8 @@ if nb_couches >=4:
 if nb_couches >=5:
     with st.expander("Couche de sol 'E'"):
         sol_e_name = st.text_input("Sol 'E' - Descriptif de la couche de sol :", key="soil_e_name")
-        sol_e_level_sup = st.number_input("Sol 'E' - Niveau supérieur de la couche de sol :", value=sol_c_level_inf, key="soil_e_zsup")
-        sol_e_level_inf = st.number_input("Sol 'E' - Niveau inférieur de la couche de sol :", value=-20.0, key="soil_e_zinf")
+        sol_e_level_sup = st.number_input("Sol 'E' - Niveau supérieur de la couche de sol :", value=sol_d_level_inf, key="soil_e_zsup")
+        sol_e_level_inf = st.number_input("Sol 'E' - Niveau inférieur de la couche de sol :", value=-30.0, key="soil_e_zinf")
         sol_e_courbe_frottement = st.selectbox("Sol 'E' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_e_curve")
         sol_e_pf = st.number_input("Sol 'E' - Pression de fluage moyenne [MPa] :", value=1.3, key="soil_e_pf")
         sol_e_pl = st.number_input("Sol 'E' - Pression limite moyenne [MPa] :", value=1.8, key="soil_e_pl")

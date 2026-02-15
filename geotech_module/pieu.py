@@ -3,9 +3,10 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 
 
-import geotech_module.utils as utils
-from geotech_module.solver import NewtonRaphson11
-from geotech_module.soil import Soil
+import utils
+from solver import NewtonRaphson11
+from soil import Soil
+from slice_tb import SliceTB
 
 
 TAB_A1 = {
@@ -194,7 +195,7 @@ class SlicePile:
         Module kq suivant l'annexe L de la NF P94-262, fonction du type de sol (fin ou granulaire).
         Permet de définir la loi de mobilisation de l'effort de pointe.
         """
-        return self.soil.module_kq(self.Ds)
+        return self.soil.module_kq(self.Dp)
 
     @property
     def section_pointe(self) -> float:
@@ -269,7 +270,7 @@ class SlicePile:
         """
         return self.dz_bott + self.ksi_a + self.ksi_b * self.tau_z(z) - z
 
-    def equilibre(self, dz_bott: float) -> float:
+    def equilibre(self, dz_bott: float) -> tuple[float, float]:
         """
         Calcul l'équilibre d'un tronçon pour un tassement donné
         """
@@ -347,6 +348,7 @@ class Pile:
 
     def __post_init__(self):
         self.slices = self.maillage_pieu()
+        self.slices_tb = self.make_slices_tb()
 
     @property
     def data_pile(self):
@@ -675,7 +677,21 @@ class Pile:
                 slices_acc = slices_acc + slice
         return slices_acc
 
-    def equilibre_dz_pointe(self, dz_pointe: float) -> list[float | SlicePile]:
+    def make_slices_tb(self) -> list[SliceTB]:
+        """Construit une liste de SliceTB à partir des SlicePile déjà maillées."""
+        slices_tb = []
+        for sl in self.slices:
+            slices_tb.append(
+                SliceTB(
+                    z_top=sl.z_top,
+                    delta_h=sl.delta_h,
+                    soil=sl.soil,
+                    data_pieu=self.data_pile,   # ou sl.data_pieu
+                )
+            )
+        return slices_tb
+
+    def equilibre_dz_pointe(self, dz_pointe: float) -> tuple[float, float, float, list[SlicePile]]:
         """
         Détermine l'équilibre d'un pieu pour un déplacement vertical donné de la pointe.
         """
@@ -691,7 +707,7 @@ class Pile:
             dz1 = equilibre[1]
         eq_slices = slices[::-1]
         return q1, dz_pointe, dz1, eq_slices
-    
+
     def fonction_effort_en_tete(self, dz_pointe: float) -> float:
         """
         Renvoie l'effort en tête de pieu pour un déplacement donné de la pointe du pieu.
@@ -708,35 +724,222 @@ class Pile:
             return None
         return self.equilibre_dz_pointe(dz_pointe)
 
-    def settlement_curve(self, Qmax: float|None=None, nb_pas: float|None=None) -> float:
+    def equilibre_top_down_Qtete(
+            self,
+            Q_head: float,
+            *,
+            w_head_guess: float = 0.0,
+            w_head_max: float = 0.20,
+            n_bracket: int = 40,
+            n_bisect: int = 70,
+            tol_Q: float | None = None,
+    ) -> tuple[float, float, list]:
+        """
+        Équilibre top-down piloté par la charge en tête Q_head.
+
+        Hypothèses / conventions :
+        - Compression positive.
+        - Les slices utilisées sont des SliceTB (avec .propagate("top_to_bottom", Q_in, w_in)).
+        - La pointe est modélisée par une loi q-z : Qp(w_base) = Ab * end_bearing_law(w_base, qb, kq)
+        avec contact unilatéral : si w_base <= 0 => Qp = 0 (pointe inactive).
+
+        Retour:
+        (w_head, (Q_base, w_base), slices_tb)
+        - w_head : déplacement en tête (m)
+        - (Q_base, w_base) : effort et déplacement à la base (sortie propagation)
+        - slices_tb : la liste des slices avec états mis à jour
+        """
+
+        # Tolérance sur l'équilibre en force
+        if tol_Q is None:
+            tol_Q = 1e-5 * max(1.0, abs(Q_head))
+
+        qb = self.kp_util * self.ple_etoile
+        Ab = self.section_pointe
+        # kq au droit de la pointe (diamètre de pointe)
+        soil_tip = self.get_soil_from_level(self.level_bott)
+        kq_tip = soil_tip.module_kq(self.Dp)
+
+        traction = (Q_head < 0.0)
+
+        def Qpointe(w_base: float) -> float:
+            """Réaction de pointe (MN) avec contact unilatéral."""
+            # Pointe inactive en traction (choix volontaire et robuste)
+            if traction:
+                return 0.0
+            # Compression : contact unilatéral
+            if w_base <= 0.0:
+                return 0.0
+            return Ab * utils.end_bearing_law(w_base, qb, kq_tip)
+
+        # --- PROPAGATION ---
+        def propagate_top_down(w_head: float) -> tuple[float, float]:
+            """Propager (Q,w) de la tête vers la base à déplacement tête imposé."""
+            Q, w = Q_head, w_head
+            for sl in self.slices_tb:           # ordre haut -> bas
+                Q, w = sl.propagate("top_to_bottom", Q, w)
+            return Q, w  # (Q_base, w_base)
+
+        def residu(w_head: float) -> float:
+            """
+            Résidu d'équilibre en pointe.
+            - si la base ne s'enfonce pas (w_base <= 0), on est en pointe inactive => on veut Q_base ~ 0
+            - sinon on veut Q_base = Qp(w_base)
+            """
+            Qb, wb = propagate_top_down(w_head)
+            if traction:
+                # tout doit être repris par le fût -> Q_base ~ 0
+                return Qb
+            # compression
+            if wb <= 0.0:
+                return Qb
+            return Qb - Qpointe(wb)
+
+        # --- INTERVALLE SELON LE SIGNE DE Q_head ---
+        if traction:
+            w_lo, w_hi = -abs(w_head_max), 0.0
+        else:
+            w_lo, w_hi = 0.0, abs(w_head_max)
+
+        # borne initiale a
+        a = min(max(w_head_guess, w_lo), w_hi)
+        ra = residu(a)
+        if abs(ra) <= tol_Q:
+            Qb, wb = propagate_top_down(a)
+            return a, (Qb, wb), self.slices_tb
+
+        # --- BRACKETING : balayage de w_lo -> w_hi ---
+        best_w, best_r = a, abs(ra)
+        b = None
+        rb = None
+        prev_w, prev_r = a, ra
+
+        for i in range(1, n_bracket + 1):
+            wi = w_lo + (w_hi - w_lo) * i / n_bracket
+            ri = residu(wi)
+
+            if abs(ri) < best_r:
+                best_w, best_r = wi, abs(ri)
+
+            if prev_r * ri < 0.0:
+                a, ra = prev_w, prev_r
+                b, rb = wi, ri
+                break
+
+            prev_w, prev_r = wi, ri
+
+        if b is None:
+            # Pas de bracket : on renvoie le meilleur point (résidu minimal)
+            Qb, wb = propagate_top_down(best_w)
+            return best_w, (Qb, wb), self.slices_tb
+
+        # --- BISECTION ---
+        lo, hi = a, b
+        rlo, rhi = ra, rb
+
+        for _ in range(n_bisect):
+            mid = 0.5 * (lo + hi)
+            rm = residu(mid)
+
+            if abs(rm) <= tol_Q:
+                Qbm, wbm = propagate_top_down(mid)
+                return mid, (Qbm, wbm), self.slices_tb
+
+            if rlo * rm < 0.0:
+                hi, rhi = mid, rm
+            else:
+                lo, rlo = mid, rm
+
+        mid = 0.5 * (lo + hi)
+        Qbm, wbm = propagate_top_down(mid)
+        return mid, (Qbm, wbm), self.slices_tb
+
+        # # --- 1) Bracketing ---
+        # # On cherche un intervalle [a,b] tel que residu(a) et residu(b) soient de signes opposés.
+        # # Pour rester robuste, on balaie w_head de 0 à w_head_max.
+        # a = max(0.0, w_head_guess)
+        # ra = residu(a)
+        # if abs(ra) <= tol_Q:
+        #     Qb, wb = propagate_top_down(a)
+        #     return a, (Qb, wb), self.slices_tb
+
+        # # Balayage progressif
+        # b = None
+        # rb = None
+        # for i in range(1, n_bracket + 1):
+        #     wi = (w_head_max * i) / n_bracket
+        #     ri = residu(wi)
+        #     if ra * ri < 0.0:
+        #         b, rb = wi, ri
+        #         break
+
+        # if b is None:
+        #     # Pas de changement de signe jusqu'à w_head_max.
+        #     # Interprétation la plus fréquente : pointe inactive (ou cible hors domaine avec les paramètres choisis).
+        #     # On renvoie la meilleure solution "au bord" : w_head = 0 (pointe inactive)
+        #     Qb0, wb0 = propagate_top_down(0.0)
+        #     return 0.0, (Qb0, wb0), self.slices_tb
+
+        # # --- 2) Bisection (robuste) ---
+        # lo, hi = a, b
+        # rlo, rhi = ra, rb
+        # for _ in range(n_bisect):
+        #     mid = 0.5 * (lo + hi)
+        #     rm = residu(mid)
+
+        #     if abs(rm) <= tol_Q:
+        #         Qbm, wbm = propagate_top_down(mid)
+        #         return mid, (Qbm, wbm), self.slices_tb
+
+        #     if rlo * rm < 0.0:
+        #         hi, rhi = mid, rm
+        #     else:
+        #         lo, rlo = mid, rm
+
+        # # Retour après itérations max
+        # mid = 0.5 * (lo + hi)
+        # Qbm, wbm = propagate_top_down(mid)
+
+        # return mid, (Qbm, wbm), self.slices_tb
+
+    def settlement_curve(
+            self,
+            Qmin: float|None=None,
+            Qmax: float|None=None,
+            nb_pas: float|None=None,
+    ) -> float:
         """
         Courbe de chargement du pieu, définie par :
             - en abscisse:  la charge en tête
             - en ordonnée:  le tassement en tête du pieu
         """
         if Qmax is None:
-            # Qmax = self.resistance_totale - 0.0001
-            Qmax = self.portance_ELU_Acc * 1.1
+            Qmax = 0.99 * self.resistance_totale
+        if Qmin is None:
+            Qmin = -0.99 * self.resistance_skin_friction
+        if Qmin > Qmax:
+            raise ValueError("Qmin doit être inférieur à Qmax")
         if nb_pas is None:
             nb_pas = 20
-        Qi = 1/2 * Qmax / nb_pas
+        Qi = Qmin
         dz_acc = []
         effort_acc = []
         i = 0
         while i <= nb_pas:
-            equilibre = self.equilibre_Q_top(Qi)
+            equilibre = self.equilibre_top_down_Qtete(Qi)
             if equilibre == None:
                 i += 1
-                Qi = i * Qmax / nb_pas
+                Qi = Qmin + i * (Qmax - Qmin) / nb_pas
                 continue
             else:
-                effort = equilibre[3][0].Q_top
-                dz_tete = equilibre[3][2].dz_top
+                effort = Qi
+                dz_tete = equilibre[0]
                 dz_acc.append(dz_tete)
                 effort_acc.append(effort)
                 i +=1
-                Qi = i * Qmax / nb_pas
+                Qi = Qmin + i * (Qmax - Qmin) / nb_pas
         return dz_acc, effort_acc
+
 
     @property
     def data_for_fe_model(self):
@@ -745,8 +948,8 @@ class Pile:
         """
         dico = {
             'E': self.Eb,
-            'B': 0.25,
-            'Iz': 5.84e-6,
+            'B': 0.80,
+            'Iz': 0.02,
             'Iy': 1.,
             'A': 1.,
             'J': 1.,
@@ -777,7 +980,9 @@ class Pile:
         description += f"\n\tCatégorie :\t\t{self.category}\t(au sens du tableau A1 de la NF P94-262 - Annexe A)"
         description += f"\n\tClasse :\t\t{self.pile_classe}\t"
         description += f"\n\nGéométrie de la fondation profonde :"
-        description += f"\n\tSection :\t\tA ={self.section_pointe: .5f} m²"
+        description += f"\n\tNiveau supérieur :\tz ={self.level_top: .3f} m"
+        description += f"\n\tNiveau inférieur :\tz ={self.level_bott: .3f} m"
+        description += f"\n\tSection :\t\tz ={self.section_pointe: .5f} m²"
         description += f"\n\tPérimètre :\t\tp ={self.perimetre: .4f} m"
         description += f"\n\tHauteur totale :\tH ={self.height_pile: .3f} m"
         description += f"\n\tModule de Young :\tEb ={self.Eb: ,} MPa".replace(',', ' ')
