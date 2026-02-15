@@ -1,7 +1,8 @@
 import math
 
-import pieu
-import soil
+import geotech_module.pieu as pieu
+import geotech_module.soil as soil
+
 
 sol_1 = soil.Soil("Argile", 0.0, -1.0, 'Q1', 0.5, 1., 5., 2/3)
 

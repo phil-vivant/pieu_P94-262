@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 
 
 import geotech_module.utils as utils
-from solver import NewtonRaphson11
-from soil import Soil
-from slice_tb import SliceTB
+from geotech_module.solver import NewtonRaphson11
+from geotech_module.soil import Soil
+from geotech_module.slice_tb import SliceTB
 
 
 TAB_A1 = {

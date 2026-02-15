@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 import math
 
-import utils
-from soil import Soil
-from solver import NewtonRaphson11
+import geotech_module.utils as utils
+from geotech_module.soil import Soil
+from geotech_module.solver import NewtonRaphson11
 
 
 @dataclass
