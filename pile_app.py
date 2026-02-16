@@ -303,22 +303,40 @@ tog_tass = st.toggle("tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
     tassement = pieu.settlement_curve()
-    x_acc = []
-    y_acc = []
-    for x in tassement[1]:
-        x_acc.append(1000 * x)
-    for y in tassement[0]:
-        y_acc.append(1000 * y)
+    x_acc_neg = []
+    x_acc_pos = []
+    y_acc_neg = []
+    y_acc_pos = []
+    # for x in tassement[1]:
+    #     x_acc.append(1000 * x)
+    # for y in tassement[0]:
+    #     y_acc.append(1000 * y)
+    for i, x in range(tassement[1]):
+        if x <= 0:
+            x_acc_neg.append(1000 * x)
+            y_acc_neg.append(1000 * tassement[1][i])
+        else:
+            x_acc_pos.append(1000 * x)
+            y_acc_pos.append(1000 * tassement[1][i])
 
     fig = go.Figure()
 
     # Plot lines
     fig.add_trace(
         go.Scatter(
-        x=x_acc, 
-        y=y_acc,
+        x=x_acc_neg, 
+        y=y_acc_neg,
         line={"color": "teal"},
-        name="Column B"
+        linestyle={"dotted"},
+        name="Negative Settlement"
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+        x=x_acc_pos,
+        y=y_acc_pos,
+        line={"color": "teal"},
+        name="Positive Settlement"
         )
     )
     fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
