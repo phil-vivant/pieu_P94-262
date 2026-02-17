@@ -274,10 +274,10 @@ with colA:
         f"""
     | Combinaisons |  | Valeur |
     |:---|---:|:---|
-    | ELS Quasi-Permanent : | $ELS_{{QP}}$ | {1000 * pieu.portance_ELS_QP: .1f} kN |
-    | ELS Caractéristique : | $ELS_{{Car}}$ | {1000 * pieu.portance_ELS_Car: .1f} kN |
-    | ELU Structural : | $ELU_{{Str}}$ | {1000 * pieu.portance_ELU_Str: .2f} kN |
-    | ELU Accidentel : | $ELU_{{Acc}}$ | {1000 * pieu.portance_ELU_Acc: .2f} kN |
+    | Résistance de pointe : | $R_{{b}}$ | {1000 * pieu.Rbk: .1f} kN |
+    | Résistance de frottement axial : | $R_{{s}}$ | {1000 * pieu.Rsk_comp: .1f} kN |
+    | Charge de fluage (compression) : | $R_{{c;cr;k}}$ | {1000 * pieu.portance_fluage_car: .1f} kN |
+    | Charge de fluage (traction) : | $ELU_{{t;cr;k}}$ | {1000 * pieu.traction_fluage_car: .1f} kN |
     """
     )
 
@@ -285,12 +285,12 @@ with colB:
     st.subheader('Compression')
     st.markdown(
         f"""
-    | Combinaisons |  |  | Valeur |
+    | Combinaisons |  |  |  |
     |:---|:---:|---:|:---|
     | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN |
     | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
-    | ELU Structural : | $ELU_{{Str}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Str: .2f} kN |
-    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Acc: .2f} kN |
+    | ELU Structural : | $ELU_{{Str}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Str: .1f} kN |
+    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Acc: .1f} kN |
     """
     )
 
@@ -298,12 +298,12 @@ with colC:
     st.subheader('Traction')
     st.markdown(
         f"""
-    | Combinaisons |  |  | Valeur |
+    | Combinaisons |  |  |  |
     |:---|:---:|---:|:---|
     | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_QP: .1f} kN |
     | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_Car: .1f} kN |
-    | ELU Structural : | $ELU_{{Str}}$ | $R_{{td}}$ = | {1000 * pieu.traction_ELU_Str: .2f} kN |
-    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{td}}$ = | {1000 * pieu.traction_ELU_Acc: .2f} kN |
+    | ELU Structural : | $ELU_{{Str}}$ | $R_{{td}}$ = | {1000 * pieu.traction_ELU_Str: .1f} kN |
+    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{td}}$ = | {1000 * pieu.traction_ELU_Acc: .1f} kN |
     """
     )
 
