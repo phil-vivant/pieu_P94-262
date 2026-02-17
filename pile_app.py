@@ -484,13 +484,13 @@ if tog_equ == True:
     # with cola:
     st.markdown(
         f"""
-    | Principaux résultats                                  |               |                                  |
-    |:---                                                   |---:           |---:                              |
-    | Effort vertical en tête de pieu :                     | $Q_{{top}}$   | {q_target: .1f} kN               |
-    | Effort de pointe :                                    | $Q_{{bot}}$   | {1000 * equilibre[1][0]: .1f} kN |
-    | Déplacement vertical en tête de pieu :                | $dz_{{top}}$  | {1000 * equilibre[0]: .2f} mm    |
-    | Déplacement vertical au niveau de la pointe du pieu : | $dz_{{bot}}$  | {1000 * equilibre[1][1]: .2f} mm |
-    | Frottement maximum sur la hauteur du pieu :           | $q_{{s,max}}$ | {1000 * qs_max: .2f} kPa         |
+    | Principaux résultats                                  |                 |                                  |
+    |:---                                                   |---:             |---:                              |
+    | Effort vertical en tête de pieu :                     | $Q_{{top}}$ =   | {q_target: .1f} kN               |
+    | Effort de pointe :                                    | $Q_{{bot}}$ =   | {1000 * equilibre[1][0]: .1f} kN |
+    | Déplacement vertical en tête de pieu :                | $dz_{{top}}$ =  | {1000 * equilibre[0]: .2f} mm    |
+    | Déplacement vertical au niveau de la pointe du pieu : | $dz_{{bot}}$ =  | {1000 * equilibre[1][1]: .2f} mm |
+    | Frottement maximum sur la hauteur du pieu :           | $q_{{s,max}}$ = | {1000 * qs_max: .2f} kPa         |
     """
     )
 
