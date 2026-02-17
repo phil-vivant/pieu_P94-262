@@ -413,9 +413,9 @@ if tog_tass == True:
             name="Compression"
             )
         )
-        fig1.layout.title.text = "Courbe de tassement"
+        fig1.layout.title.text = "Déplacement vertical en tête de pieu"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-        fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
+        fig1.layout.yaxis.title = "dz [mm]"
         st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
@@ -438,9 +438,9 @@ if tog_tass == True:
             )
         )
 
-        fig2.layout.title.text = "Courbe de raideur axiale du pieu"
+        fig2.layout.title.text = "Courbe de raideur axiale en tête de pieu"
         fig2.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-        fig2.layout.yaxis.title = "Raideur axiale en tête de pieu [MN/ml]"
+        fig2.layout.yaxis.title = "Kz [MN/ml]"
         st.plotly_chart(fig2, use_container_width=True)
 
 st.divider()
