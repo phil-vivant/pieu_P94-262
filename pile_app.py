@@ -350,7 +350,7 @@ st.divider()
 
 ###  ----------------- Courbe de tassement  ----------------- ###
 
-st.subheader("Courbe de tassement du pieu - Méthode de Franck & Zhao suivant l'Annexe L de la NF P94-262")
+st.subheader("Courbe de tassement du pieu - Méthode de Franck & Zhao - NF P94-262 Annexe L")
 tog_tass = st.toggle("Tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
