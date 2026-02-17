@@ -440,9 +440,9 @@ if tog_equ == True:
         # st.write(f"qs_max    = {1000 * qs_max: .2f} kPa")
         st.markdown(
             f"""
-        | Grandeur | Valeur |
-        |---:|:---|
-        | $Q_{{top}}$ | {q_target:.1f} kN |
+        | Description | Grandeur | Valeur |
+        |:---|---:|:---|
+        | "Effort vertical en tête de pieu :" || $Q_{{top}}$ | {q_target:.1f} kN |
         """
         )
 
