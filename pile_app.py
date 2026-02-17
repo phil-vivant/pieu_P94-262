@@ -496,7 +496,6 @@ if tog_equ == True:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        # st.subheader('Tassement pieu/sol')
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
@@ -514,14 +513,11 @@ if tog_equ == True:
             name="δz sol"
             )
         )
-        fig1.layout.title.text = "Courbe de tassement"
-        # fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-        # fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
+        fig1.layout.title.text = "Tassement pieu/sol"
         st.plotly_chart(fig1, use_container_width=True)
 
 
     with col2:
-        st.subheader('Frottement pieu/sol')
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
@@ -539,10 +535,10 @@ if tog_equ == True:
             name="qs_lim"
             )
         )
-
+        fig2.layout.title.text = "Frottement pieu/sol"
         st.plotly_chart(fig2, use_container_width=True)
+
     with col3:
-        st.subheader('Effort dans le pieu')
         fig3 = go.Figure()
         fig3.add_trace(
             go.Scatter(
@@ -560,6 +556,7 @@ if tog_equ == True:
             name="Qsol(z)"
             )
         )
+        fig3.layout.title.text = "Effort dans le pieu"
         st.plotly_chart(fig3, use_container_width=True)
 
 
