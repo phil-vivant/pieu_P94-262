@@ -433,8 +433,8 @@ if tog_equ == True:
         st.write('Déplacement vertical au niveau de la pointe du pieu :')
         st.write('Frottement maximum sur la hauteur du pieu :')
     with colb:
-        st.write(f"Q_top     = {q_target: .2f} kN")
-        st.write(f"Q_bot     = {1000 * equilibre[1][0]: .2f} kN")
+        st.write(f"Q_top     = {q_target: .1f} kN")
+        st.write(f"Q_bot     = {1000 * equilibre[1][0]: .1f} kN")
         st.write(f"dz_top    = {1000 * equilibre[0]: .2f} mm")
         st.write(f"dz_bot    = {1000 * equilibre[1][1]: .2f} mm")
         st.write(f"qs_max    = {1000 * qs_max: .2f} kPa")
