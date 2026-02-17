@@ -319,12 +319,12 @@ with colB:
 with colC:
     st.markdown(
         f"""
-    | Résistances en Traction |  |  |  |
-    |:---|:---:|---:|:---|
-    | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_QP: .1f} kN |
-    | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_Car: .1f} kN |
-    | ELU Structural : | $ELU_{{Str}}$ | $R_{{td}}$ = | {1000 * pieu.traction_ELU_Str: .1f} kN |
-    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{td}}$ = | {1000 * pieu.traction_ELU_Acc: .1f} kN |
+    | Résistances en Traction |               |                  |                                        |
+    |:---                     |:---:          |---:              |---:                                    |
+    | ELS Quasi-Permanent :   | $ELS_{{QP}}$  | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_QP: .1f} kN  |
+    | ELS Caractéristique :   | $ELS_{{Car}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_Car: .1f} kN |
+    | ELU Structural :        | $ELU_{{Str}}$ | $R_{{td}}$ =     | {1000 * pieu.traction_ELU_Str: .1f} kN |
+    | ELU Accidentel :        | $ELU_{{Acc}}$ | $R_{{td}}$ =     | {1000 * pieu.traction_ELU_Acc: .1f} kN |
     """
     )
 
