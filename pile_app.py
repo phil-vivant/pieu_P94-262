@@ -228,7 +228,7 @@ if nb_couches >=5:
 
         sol_E = Soil(
             name=sol_e_name,
-            level_sup=sol_d_level_sup,
+            level_sup=sol_e_level_sup,
             level_inf=sol_e_level_inf,
             courbe_frottement=sol_e_courbe_frottement,
             pf=sol_e_pf,
@@ -303,15 +303,10 @@ tog_tass = st.toggle("tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
     tassement = pieu.settlement_curve()
-    len_curve = len(tassement[1])
     x_acc_neg = []
     x_acc_pos = [0]
     y_acc_neg = []
     y_acc_pos = [0]
-    # for x in tassement[1]:
-    #     x_acc.append(1000 * x)
-    # for y in tassement[0]:
-    #     y_acc.append(1000 * y)
     for i, x in enumerate(tassement[1]):
         if x <= 0:
             x_acc_neg.append(1000 * x)
