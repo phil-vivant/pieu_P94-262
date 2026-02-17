@@ -48,6 +48,8 @@ APP_STATE_KEYS = [
     "tog_transversal",
 ]
 
+ROUND_FORCE = 1
+ROUND_DEPL = 2
 
 
 def export_state(keys):
@@ -107,6 +109,8 @@ st.divider()
 
 persistence_ui()
 
+###  ----------------- Définition du Pieu  ----------------- ###
+
 # Pieu
 st.sidebar.title('Définition du pieu')
 level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", value=0.0, key="pile_top")
@@ -116,6 +120,9 @@ Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", value=210_000, key
 pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", value=46.3, key="pile_dp")
 pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", value=88.9, key="pile_ds")
 interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=200, key="pile_int")
+
+
+###  ----------------- Définition des couches de sols  ----------------- ###
 
 st.subheader('Lithologie')
 nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 5) :", value = 4, key="soil_nb_layers")
@@ -288,7 +295,7 @@ with colC:
     st.subheader('Coefficients partiels')
     st.markdown(
         f"""
-    | Description              |                    |                       |
+    | Tableau F.2.1            |                    |                       |
     |:---                      |---:                |---:                   |
     | Pour la compression :    | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
     | Pour la traction :       | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
@@ -297,6 +304,9 @@ with colC:
     )
 
 st.divider()
+
+
+###  ----------------- Capacités Résistantes du Pieu  ----------------- ###
 
 st.subheader('Capacité résistante du pieu')
 
@@ -339,6 +349,8 @@ with colC:
 
 st.divider()
 
+###  ----------------- Courbe de tassement  ----------------- ###
+
 st.subheader("Courbe de tassement du pieu - Méthode de Franck & Zhao suivant l'Annexe L de la NF P94-262")
 tog_tass = st.toggle("Tracer la courbe de tassement", key="tog_tass")
 
@@ -349,7 +361,7 @@ if tog_tass == True:
     Q  = tassement[1]      # x = Qtete
 
     # mise à l'échelle (MN->kN)
-    pairs = [(round(1000*q, 1), round(1000*d, 2)) for q, d in zip(Q, dz)]
+    pairs = [(1000*q, 1000*d) for q, d in zip(Q, dz)]
 
     neg = [(q, d) for (q, d) in pairs if q <= 0]
     pos = [(q, d) for (q, d) in pairs if q >= 0]
@@ -364,22 +376,23 @@ if tog_tass == True:
     neg = ensure_origin(neg)
     pos = ensure_origin(pos)
 
-    # Optionnel mais souvent utile pour l'affichage Plotly : trier par Qtete
+    # Trier par Qtete
     neg = sorted(neg, key=lambda t: t[0])
     pos = sorted(pos, key=lambda t: t[0])
 
-    x_acc_neg = [q for (q, d) in neg]
-    y_acc_neg = [d for (q, d) in neg]
-    x_acc_pos = [q for (q, d) in pos]
-    y_acc_pos = [d for (q, d) in pos]
+    x_acc_neg = [round(q, ROUND_FORCE) for (q, d) in neg]
+    y_acc_neg = [round(d, ROUND_DEPL) for (q, d) in neg]
+    x_acc_pos = [round(q, ROUND_FORCE) for (q, d) in pos]
+    y_acc_pos = [round(d, ROUND_DEPL) for (q, d) in pos]
 
     # Raideur Kz = Q / dz, scindée aussi
     eps = 1e-6  # en mm si tu as mis *1000 ; ajuste si besoin
     x_kz_acc_neg = [q for (q, d) in neg if abs(d) > eps]
     Kz_acc_neg   = [q / d for (q, d) in neg if abs(d) > eps]
 
-    x_kz_acc_pos = [q for (q, d) in pos if abs(d) > eps]
-    Kz_acc_pos   = [q / d for (q, d) in pos if abs(d) > eps]
+    x_kz_acc_pos = [round(q, ROUND_FORCE) for (q, d) in pos if abs(d) > eps]
+    Kz_acc_pos   = [round(q / d, ROUND_DEPL) for (q, d) in pos if abs(d) > eps]
+
 
     col1, col2 = st.columns(2)
     with col1:
@@ -432,6 +445,8 @@ if tog_tass == True:
         st.plotly_chart(fig2, use_container_width=True)
 
 st.divider()
+
+###  ----------------- Étude de l'équilibre général du pieu  ----------------- ###
 
 st.subheader('Équilibre pour un chargement vertical donné')
 
