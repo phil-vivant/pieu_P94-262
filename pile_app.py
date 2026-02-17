@@ -515,8 +515,8 @@ if tog_equ == True:
             )
         )
         fig1.layout.title.text = "Courbe de tassement"
-        fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-        fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
+        # fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
+        # fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
         st.plotly_chart(fig1, use_container_width=True)
 
 
