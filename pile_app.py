@@ -327,8 +327,7 @@ if tog_tass == True:
         go.Scatter(
         x=x_acc_neg, 
         y=y_acc_neg,
-        line={"color": "teal"},
-        linestyle={"dotted"},
+        line={"color": "teal", "dash":"dot"},
         name="Negative Settlement"
         )
     )
