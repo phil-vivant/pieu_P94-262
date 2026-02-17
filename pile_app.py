@@ -265,10 +265,10 @@ st.subheader('Description du pieu')
 st.markdown(
     f"""
 |  |  |  |
-|:---|---:|:---|
+|:---|---:|
 | Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A : | {str(pieu.category)} |
 | Classe du pieu : | {str(pieu.pile_classe)} |
-| pieu.description : | 'pieu.abreviation_pieu' |
+| {pieu.description} : | {pieu.abreviation_pieu} |
 """
 )
 
