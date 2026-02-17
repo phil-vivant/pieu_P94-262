@@ -612,7 +612,6 @@ if tog_transversal == True:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.write('Moment flechissant')
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
@@ -630,11 +629,11 @@ if tog_transversal == True:
             name="0"
             )
         )
-
-        st.plotly_chart(fig1, use_container_width=True)
         fig1.layout.title.text = "Moment fléchissant"
+        st.plotly_chart(fig1, use_container_width=True)
+
     with col2:
-        st.write('Effort tranchant')
+        # st.write('Effort tranchant')
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
@@ -652,9 +651,11 @@ if tog_transversal == True:
             name="0"
             )
         )
+        fig2.layout.title.text = "Effort tranchant"
         st.plotly_chart(fig2, use_container_width=True)
+
     with col3:
-        st.write('Déplacement horizontal')
+        # st.write('Déplacement horizontal')
         fig3 = go.Figure()
         fig3.add_trace(
             go.Scatter(
@@ -672,4 +673,5 @@ if tog_transversal == True:
             name="0"
             )
         )
+        fig3.layout.title.text = "Déplacement horizontal"
         st.plotly_chart(fig3, use_container_width=True)
