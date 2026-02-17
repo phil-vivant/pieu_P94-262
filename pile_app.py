@@ -442,7 +442,7 @@ if tog_equ == True:
             f"""
         | Description | Grandeur | Valeur |
         |:---|---:|:---|
-        | "Effort vertical en tête de pieu :" || $Q_{{top}}$ | {q_target:.1f} kN |
+        | Effort vertical en tête de pieu : | $Q_{{top}}$ | {q_target:.1f} kN |
         """
         )
 
