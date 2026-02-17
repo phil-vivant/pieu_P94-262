@@ -308,7 +308,7 @@ if tog_tass == True:
     Q  = tassement[1]      # x = Qtete
 
     # mise à l'échelle (MN->kN)
-    pairs = [(round(1000*q, 1), round(1000*d, 1)) for q, d in zip(Q, dz)]
+    pairs = [(round(1000*q, 1), round(1000*d, 2)) for q, d in zip(Q, dz)]
 
     neg = [(q, d) for (q, d) in pairs if q <= 0]
     pos = [(q, d) for (q, d) in pairs if q >= 0]
