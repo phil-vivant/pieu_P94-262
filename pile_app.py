@@ -264,10 +264,10 @@ with colA:
     st.subheader('Description du pieu au sens du tableau A1 de la NF P94-262 - Annexe A')
     st.markdown(
         f"""
-    | Description |  |
-    |:---|---:|
-    | Catégorie du pieu : | {str(pieu.category)} |
-    | Classe du pieu : | {str(pieu.pile_classe)} |
+    | Description          |                         |
+    |:---                  |---:                     |
+    | Catégorie du pieu :  | {str(pieu.category)}    |
+    | Classe du pieu :     | {str(pieu.pile_classe)} |
     | {pieu.description} : | {pieu.abreviation_pieu} |
     """
     )
@@ -275,15 +275,15 @@ with colB:
     st.subheader('Paramètres de calculs et coefficients partiels')
     st.markdown(
         f"""
-    | Description |  |  |
-    |:---|---:|---:|
-    | Pression limite nette équivalente :    | $p_{{le*}}$ =      | {round(pieu.ple_etoile, 3)} MPa |
+    | Description                            |                    |                                                   |
+    |:---                                    |---:                |---:                                               |
+    | Pression limite nette équivalente :    | $p_{{le*}}$ =      | {round(pieu.ple_etoile, 3)} MPa                   |
     | Hauteur d'encastrement effective :     | $D_{{ef}}$ =       | {round(pieu.hauteur_encastrement_effective, 3)} m |
-    | Facteurs de portance pressiométrique : | $k_{{pmax}}$ =     | {pieu.kp_max} |
-    |                                        | $k_{{p}}$ =        | {pieu.kp_util} |
-    | Coefficients partiels de modèle :      | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
-    |                                        | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
-    |                                        | $Ɣ_{{Rd2}}$ =      | {pieu.gamma_rd2} |
+    | Facteurs de portance pressiométrique : | $k_{{pmax}}$ =     | {pieu.kp_max}                                     |
+    |                                        | $k_{{p}}$ =        | {pieu.kp_util}                                    |
+    | Coefficients partiels de modèle :      | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp}                             |
+    |                                        | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac}                             |
+    |                                        | $Ɣ_{{Rd2}}$ =      | {pieu.gamma_rd2}                                  |
     """
     )
 
@@ -295,24 +295,24 @@ colA, colB, colC = st.columns(3)
 with colA:
     st.markdown(
         f"""
-    | Valeurs caractéristiques |  |  |
-    |:---|---:|:---|
-    | Résistance de pointe : | $R_{{b}}$ = | {1000 * pieu.Rbk: .1f} kN |
-    | Résistance de frottement axial : | $R_{{s}}$ = | {1000 * pieu.Rsk_comp: .1f} kN |
+    | Valeurs caractéristiques         |                  |                                           |
+    |:---                              |---:              |:---                                       |
+    | Résistance de pointe :           | $R_{{b}}$ =      | {1000 * pieu.Rbk: .1f} kN                 |
+    | Résistance de frottement axial : | $R_{{s}}$ =      | {1000 * pieu.Rsk_comp: .1f} kN            |
     | Charge de fluage (compression) : | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN |
-    | Charge de fluage (traction) : | $R_{{t;cr;k}}$ = | {1000 * pieu.traction_fluage_car: .1f} kN |
+    | Charge de fluage (traction) :    | $R_{{t;cr;k}}$ = | {1000 * pieu.traction_fluage_car: .1f} kN |
     """
     )
 
 with colB:
     st.markdown(
         f"""
-    | Résistances en Compression |  |  |  |
-    |:---|:---:|---:|:---|
-    | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN |
-    | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
-    | ELU Structural : | $ELU_{{Str}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Str: .1f} kN |
-    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Acc: .1f} kN |
+    | Résistances en Compression |               |                  |                                        |
+    |:---                        |:---:          |---:              |:---                                    |
+    | ELS Quasi-Permanent :      | $ELS_{{QP}}$  | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN  |
+    | ELS Caractéristique :      | $ELS_{{Car}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
+    | ELU Structural :           | $ELU_{{Str}}$ | $R_{{cd}}$ =     | {1000 * pieu.portance_ELU_Str: .1f} kN |
+    | ELU Accidentel :           | $ELU_{{Acc}}$ | $R_{{cd}}$ =     | {1000 * pieu.portance_ELU_Acc: .1f} kN |
     """
     )
 
@@ -461,13 +461,13 @@ if tog_equ == True:
     # with cola:
     st.markdown(
         f"""
-    | Principaux résultats | Grandeur | Valeur |
-    |:---|---:|:---|
-    | Effort vertical en tête de pieu : | $Q_{{top}}$ | {q_target: .1f} kN |
-    | Effort de pointe : | $Q_{{bot}}$ | {1000 * equilibre[1][0]: .1f} kN |
-    | Déplacement vertical en tête de pieu : | $dz_{{top}}$ | {1000 * equilibre[0]: .2f} mm |
-    | Déplacement vertical au niveau de la pointe du pieu : | $dz_{{bot}}$ | {1000 * equilibre[1][1]: .2f} mm |
-    | Frottement maximum sur la hauteur du pieu : | $q_{{s,max}}$ | {1000 * qs_max: .2f} kPa |
+    | Principaux résultats                                  | Grandeur      | Valeur                           |
+    |:---                                                   |---:           |:---                              |
+    | Effort vertical en tête de pieu :                     | $Q_{{top}}$   | {q_target: .1f} kN               |
+    | Effort de pointe :                                    | $Q_{{bot}}$   | {1000 * equilibre[1][0]: .1f} kN |
+    | Déplacement vertical en tête de pieu :                | $dz_{{top}}$  | {1000 * equilibre[0]: .2f} mm    |
+    | Déplacement vertical au niveau de la pointe du pieu : | $dz_{{bot}}$  | {1000 * equilibre[1][1]: .2f} mm |
+    | Frottement maximum sur la hauteur du pieu :           | $q_{{s,max}}$ | {1000 * qs_max: .2f} kPa         |
     """
     )
 
