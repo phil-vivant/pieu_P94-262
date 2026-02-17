@@ -259,31 +259,40 @@ pieu = Pile(
     thickness=interval / 1000
 )
 
-colA, colB = st.columns(2)
+colA, colB, colC = st.columns(3)
 with colA:
-    st.subheader('Description du pieu au sens du tableau A1 de la NF P94-262 - Annexe A')
+    st.subheader('Description du pieu')
     st.markdown(
         f"""
-    | Description          |                         |
-    |:---                  |---:                     |
-    | Catégorie du pieu :  | {str(pieu.category)}    |
-    | Classe du pieu :     | {str(pieu.pile_classe)} |
-    | {pieu.description} : | {pieu.abreviation_pieu} |
+    | Tableau A1 de la NF P94-262 |                         |
+    |:---                         |---:                     |
+    | Catégorie du pieu :         | {str(pieu.category)}    |
+    | Classe du pieu :            | {str(pieu.pile_classe)} |
+    | {pieu.description} :        | {pieu.abreviation_pieu} |
     """
     )
 with colB:
-    st.subheader('Paramètres de calculs et coefficients partiels')
+    st.subheader('Paramètres de calculs')
     st.markdown(
         f"""
-    | Description                            |                    |                                                   |
-    |:---                                    |---:                |---:                                               |
-    | Pression limite nette équivalente :    | $p_{{le*}}$ =      | {round(pieu.ple_etoile, 3)} MPa                   |
-    | Hauteur d'encastrement effective :     | $D_{{ef}}$ =       | {round(pieu.hauteur_encastrement_effective, 3)} m |
-    | Facteurs de portance pressiométrique : | $k_{{pmax}}$ =     | {pieu.kp_max}                                     |
-    |                                        | $k_{{p}}$ =        | {pieu.kp_util}                                    |
-    | Coefficients partiels de modèle :      | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp}                             |
-    |                                        | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac}                             |
-    |                                        | $Ɣ_{{Rd2}}$ =      | {pieu.gamma_rd2}                                  |
+    | Description                            |                |                                                   |
+    |:---                                    |---:            |---:                                               |
+    | Pression limite nette équivalente :    | $p_{{le*}}$ =  | {round(pieu.ple_etoile, 3)} MPa                   |
+    | Hauteur d'encastrement effective :     | $D_{{ef}}$ =   | {round(pieu.hauteur_encastrement_effective, 3)} m |
+    | Facteurs de portance pressiométrique : | $k_{{pmax}}$ = | {pieu.kp_max}                                     |
+    |                                        | $k_{{p}}$ =    | {pieu.kp_util}                                    |
+    """
+    )
+
+with colC:
+    st.subheader('Coefficients partiels')
+    st.markdown(
+        f"""
+    | Description                            |                    |                       |
+    |:---                                    |---:                |---:                   |
+    | Coefficients partiels de modèle :      | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
+    |                                        | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
+    |                                        | $Ɣ_{{Rd2}}$ =      | {pieu.gamma_rd2}      |
     """
     )
 
