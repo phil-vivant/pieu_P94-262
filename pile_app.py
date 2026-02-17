@@ -385,7 +385,7 @@ if tog_tass == True:
         fig1.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
-        fig1.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
+        st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
         # st.write('Frottement pieu/sol')
