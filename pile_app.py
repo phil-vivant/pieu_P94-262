@@ -259,25 +259,33 @@ pieu = Pile(
     thickness=interval / 1000
 )
 
-st.subheader('Description du pieu au sens du tableau A1 de la NF P94-262 - Annexe A')
-# col1, col2 = st.columns([3, 1])
-# with col1:
-#     st.write('Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A :')
-#     st.write('Classe du pieu :')
-#     st.write(pieu.description, ' :')
-# with col2:
-#     st.write(str(pieu.category))
-#     st.write(str(pieu.pile_classe))
-#     st.write(pieu.abreviation_pieu)
-st.markdown(
-    f"""
-| Description |  |
-|:---|---:|
-| Catégorie du pieu : | {str(pieu.category)} |
-| Classe du pieu : | {str(pieu.pile_classe)} |
-| {pieu.description} : | {pieu.abreviation_pieu} |
-"""
-)
+# st.subheader('Description du pieu au sens du tableau A1 de la NF P94-262 - Annexe A')
+colA, colB = st.columns(2)
+with colA:
+    st.subheader('Description du pieu au sens du tableau A1 de la NF P94-262 - Annexe A')
+    st.markdown(
+        f"""
+    | Description |  |
+    |:---|---:|
+    | Catégorie du pieu : | {str(pieu.category)} |
+    | Classe du pieu : | {str(pieu.pile_classe)} |
+    | {pieu.description} : | {pieu.abreviation_pieu} |
+    """
+    )
+with colB:
+    st.subheader('Paramètres de calculs et coefficients partiels')
+    st.markdown(
+        f"""
+    | Description |  |  |
+    |:---|---:|---:|
+    | Facteur de portance pressiométrique : | $k_{{pmax}}$ = | {pieu.kp_max} |
+    | Facteur de portance pressiométrique : | $k_{{p}}$ = | {pieu.kp_util} |
+    | Hauteur d'encastrement effective : | $D_{{ef}}$ = | {round(pieu.hauteur_encastrement_effective, 3)} m |
+    | Coefficient partiel de modèle : | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
+    | Coefficient partiel de modèle : | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
+    | Coefficient partiel de modèle : | $Ɣ_{{Rd2}}$ = | {pieu.gamma_rd2} |
+    """
+    )
 
 
 st.divider()
@@ -290,10 +298,10 @@ with colA:
         f"""
     | Valeurs caractéristiques |  |  |
     |:---|---:|:---|
-    | Résistance de pointe : | $R_{{b}}$ | {1000 * pieu.Rbk: .1f} kN |
-    | Résistance de frottement axial : | $R_{{s}}$ | {1000 * pieu.Rsk_comp: .1f} kN |
-    | Charge de fluage (compression) : | $R_{{c;cr;k}}$ | {1000 * pieu.portance_fluage_car: .1f} kN |
-    | Charge de fluage (traction) : | $R_{{t;cr;k}}$ | {1000 * pieu.traction_fluage_car: .1f} kN |
+    | Résistance de pointe : | $R_{{b}}$ = | {1000 * pieu.Rbk: .1f} kN |
+    | Résistance de frottement axial : | $R_{{s}}$ = | {1000 * pieu.Rsk_comp: .1f} kN |
+    | Charge de fluage (compression) : | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN |
+    | Charge de fluage (traction) : | $R_{{t;cr;k}}$ = | {1000 * pieu.traction_fluage_car: .1f} kN |
     """
     )
 
