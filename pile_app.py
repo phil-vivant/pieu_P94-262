@@ -302,40 +302,78 @@ st.subheader('Courbe de tassement du pieu')
 tog_tass = st.toggle("tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
+
     tassement = pieu.settlement_curve()
-    x_acc_neg = []
-    x_acc_pos = [0]
-    y_acc_neg = []
-    y_acc_pos = [0]
-    for i, x in enumerate(tassement[1]):
-        if x <= 0:
-            x_acc_neg.append(1000 * x)
-            y_acc_neg.append(1000 * tassement[0][i])
-        else:
-            x_acc_pos.append(1000 * x)
-            y_acc_pos.append(1000 * tassement[0][i])
-    x_acc_neg.append(0), y_acc_neg.append(0)
+    dz = tassement[0]      # y
+    Q  = tassement[1]      # x = Qtete
+
+    # mise à l'échelle (N->kN etc. à adapter, ici *1000 comme dans ton code)
+    pairs = [(1000*q, 1000*d) for q, d in zip(Q, dz)]
+
+    neg = [(q, d) for (q, d) in pairs if q <= 0]
+    pos = [(q, d) for (q, d) in pairs if q >= 0]  # >= pour inclure l'origine côté pos aussi
+
+    # Pour l'affichage : s'assurer que (0,0) est présent dans chaque série
+    # (sans le dupliquer si déjà là)
+    def ensure_origin(lst):
+        if not any(abs(q) < 1e-12 and abs(d) < 1e-12 for (q, d) in lst):
+            lst = lst + [(0.0, 0.0)]
+        return lst
+
+    neg = ensure_origin(neg)
+    pos = ensure_origin(pos)
+
+    # Optionnel mais souvent utile pour l'affichage Plotly : trier par Qtete
+    neg = sorted(neg, key=lambda t: t[0])
+    pos = sorted(pos, key=lambda t: t[0])
+
+    x_acc_neg = [q for (q, d) in neg]
+    y_acc_neg = [d for (q, d) in neg]
+    x_acc_pos = [q for (q, d) in pos]
+    y_acc_pos = [d for (q, d) in pos]
+
+    # Raideur Kz = Q / dz, scindée aussi
+    eps = 1e-6  # en mm si tu as mis *1000 ; ajuste si besoin
+    x_kz_acc_neg = [q for (q, d) in neg if abs(d) > eps]
+    Kz_acc_neg   = [q / d for (q, d) in neg if abs(d) > eps]
+
+    x_kz_acc_pos = [q for (q, d) in pos if abs(d) > eps]
+    Kz_acc_pos   = [q / d for (q, d) in pos if abs(d) > eps]
 
 
-    x_kz_acc_neg = []
-    Kz_acc_neg = []
-    for i, y in enumerate(y_acc_neg):
-        if y == 0:
-            pass
-        else:
-            x = x_acc_neg[i]
-            x_kz_acc_neg.append(x)
-            Kz_acc_neg.append(x / y)
+    # tassement = pieu.settlement_curve()
+    # x_acc_neg = []
+    # x_acc_pos = [0]
+    # y_acc_neg = []
+    # y_acc_pos = [0]
+    # for i, x in enumerate(tassement[1]):
+    #     if x <= 0:
+    #         x_acc_neg.append(1000 * x)
+    #         y_acc_neg.append(1000 * tassement[0][i])
+    #     else:
+    #         x_acc_pos.append(1000 * x)
+    #         y_acc_pos.append(1000 * tassement[0][i])
+    # x_acc_neg.append(0), y_acc_neg.append(0)
 
-    x_kz_acc_pos = []
-    Kz_acc_pos = []
-    for i, y in enumerate(y_acc_pos):
-        if y == 0:
-            pass
-        else:
-            x = x_acc_pos[i]
-            x_kz_acc_pos.append(x)
-            Kz_acc_pos.append(x / y)
+    # x_kz_acc_neg = []
+    # Kz_acc_neg = []
+    # for i, y in enumerate(y_acc_neg):
+    #     if y == 0:
+    #         pass
+    #     else:
+    #         x = x_acc_neg[i]
+    #         x_kz_acc_neg.append(x)
+    #         Kz_acc_neg.append(x / y)
+
+    # x_kz_acc_pos = []
+    # Kz_acc_pos = []
+    # for i, y in enumerate(y_acc_pos):
+    #     if y == 0:
+    #         pass
+    #     else:
+    #         x = x_acc_pos[i]
+    #         x_kz_acc_pos.append(x)
+    #         Kz_acc_pos.append(x / y)
 
     # fig = go.Figure()
 
