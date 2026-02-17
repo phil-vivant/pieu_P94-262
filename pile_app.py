@@ -104,7 +104,9 @@ def persistence_ui(keys=APP_STATE_KEYS):
                     st.error(f"Fichier invalide : {e}")
 
 st.divider()
-st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
+colA, colB = st.columns([10, 2])
+with colA:
+    st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
 st.divider()
 
 persistence_ui()
