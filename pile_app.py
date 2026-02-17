@@ -270,17 +270,29 @@ st.subheader('Capacité résistante du pieu')
 colA, colB = st.columns(2)
 with colA:
     st.subheader('Compression')
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown('- ELS QP :')
-        st.markdown('- ELS Car :')
-        st.markdown('- ELU Str :')
-        st.markdown('- ELU Acc :')
-    with col2:
-        st.write(str(f"{1000 * pieu.portance_ELS_QP: .1f} kN"))
-        st.write(str(f"{1000 * pieu.portance_ELS_Car: .1f} kN"))
-        st.write(str(f"{1000 * pieu.portance_ELU_Str: .1f} kN"))
-        st.write(str(f"{1000 * pieu.portance_ELU_Acc: .1f} kN"))
+    # col1, col2 = st.columns(2)
+    # with col1:
+    #     st.markdown('- ELS QP :')
+    #     st.markdown('- ELS Car :')
+    #     st.markdown('- ELU Str :')
+    #     st.markdown('- ELU Acc :')
+    # with col2:
+    #     st.write(str(f"{1000 * pieu.portance_ELS_QP: .1f} kN"))
+    #     st.write(str(f"{1000 * pieu.portance_ELS_Car: .1f} kN"))
+    #     st.write(str(f"{1000 * pieu.portance_ELU_Str: .1f} kN"))
+    #     st.write(str(f"{1000 * pieu.portance_ELU_Acc: .1f} kN"))
+
+    st.markdown(
+        f"""
+    | Capacités résistantes | Notation | Valeur |
+    |:---|---:|:---|
+    | ELS Quasi-Permanent : | $ELS_{{QP}}$ | {1000 * pieu.portance_ELS_QP: .1f} kN |
+    | ELS Caractéristique : | $ELS_{{Car}}$ | {1000 * pieu.portance_ELS_Car: .1f} kN |
+    | ELU Structural : | $ELU_{{Str}}$ | {1000 * pieu.portance_ELU_Str: .2f} kN |
+    | ELU Accidentel : | $ELU_{{Acc}}$ | {1000 * pieu.portance_ELU_Acc: .2f} kN |
+    """
+    )
+
 
 with colB:
     st.subheader('Traction')
