@@ -266,7 +266,7 @@ pieu = Pile(
     thickness=interval / 1000
 )
 
-colA, colB, colC = st.columns([6, 8, 7])
+colA, colB, colC = st.columns([7, 8, 7])
 with colA:
     st.subheader('Description du pieu')
     st.markdown(
