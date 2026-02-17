@@ -315,10 +315,10 @@ if tog_tass == True:
     for i, x in enumerate(tassement[1]):
         if x <= 0:
             x_acc_neg.append(1000 * x)
-            y_acc_neg.append(1000 * tassement[1][i])
+            y_acc_neg.append(1000 * tassement[0][i])
         else:
             x_acc_pos.append(1000 * x)
-            y_acc_pos.append(1000 * tassement[1][i])
+            y_acc_pos.append(1000 * tassement[0][i])
     x_acc_neg.append(0), y_acc_neg.append(0)
 
     fig = go.Figure()
