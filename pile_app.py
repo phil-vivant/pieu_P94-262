@@ -419,7 +419,7 @@ if tog_tass == True:
         )
         fig1.layout.title.text = "Déplacement vertical en tête de pieu"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-        fig1.layout.yaxis.title = "dz [mm]"
+        fig1.layout.yaxis.title = "δz [mm]"
         st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
@@ -633,7 +633,6 @@ if tog_transversal == True:
         st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
-        # st.write('Effort tranchant')
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
@@ -655,7 +654,6 @@ if tog_transversal == True:
         st.plotly_chart(fig2, use_container_width=True)
 
     with col3:
-        # st.write('Déplacement horizontal')
         fig3 = go.Figure()
         fig3.add_trace(
             go.Scatter(
