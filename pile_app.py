@@ -10,6 +10,13 @@ from geotech_module.soil import Soil
 import geotech_module.utils as utils
 
 
+st.set_page_config(
+    page_title="Mon appli",
+    layout="wide",          # <- force le wide
+    initial_sidebar_state="expanded",  # optionnel
+)
+
+
 APP_STATE_KEYS = [
     # Pieu
     "pile_top", "pile_bot", "pile_cat", "pile_Eb", "pile_dp", "pile_ds", "pile_int",
