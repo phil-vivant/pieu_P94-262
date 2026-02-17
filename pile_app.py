@@ -307,11 +307,11 @@ if tog_tass == True:
     dz = tassement[0]      # y
     Q  = tassement[1]      # x = Qtete
 
-    # mise à l'échelle (N->kN etc. à adapter, ici *1000 comme dans ton code)
-    pairs = [(1000*q, 1000*d) for q, d in zip(Q, dz)]
+    # mise à l'échelle (MN->kN)
+    pairs = [(round(1000*q, 1), round(1000*d, 1)) for q, d in zip(Q, dz)]
 
     neg = [(q, d) for (q, d) in pairs if q <= 0]
-    pos = [(q, d) for (q, d) in pairs if q >= 0]  # >= pour inclure l'origine côté pos aussi
+    pos = [(q, d) for (q, d) in pairs if q >= 0]
 
     # Pour l'affichage : s'assurer que (0,0) est présent dans chaque série
     # (sans le dupliquer si déjà là)
@@ -346,20 +346,28 @@ if tog_tass == True:
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
-            x=x_acc_neg, 
-            y=y_acc_neg,
+            x=Q, 
+            y=dz,
             line={"color": "teal", "dash":"dash"},
             name="Traction"
             )
         )
-        fig1.add_trace(
-            go.Scatter(
-            x=x_acc_pos,
-            y=y_acc_pos,
-            line={"color": "teal"},
-            name="Compression"
-            )
-        )
+        # fig1.add_trace(
+        #     go.Scatter(
+        #     x=x_acc_neg, 
+        #     y=y_acc_neg,
+        #     line={"color": "teal", "dash":"dash"},
+        #     name="Traction"
+        #     )
+        # )
+        # fig1.add_trace(
+        #     go.Scatter(
+        #     x=x_acc_pos,
+        #     y=y_acc_pos,
+        #     line={"color": "teal"},
+        #     name="Compression"
+        #     )
+        # )
         fig1.layout.title.text = "Courbe de tassement"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
@@ -373,7 +381,7 @@ if tog_tass == True:
             x=x_kz_acc_neg, 
             y=Kz_acc_neg,
             line={"color": "teal", 'width': 2},
-            name="qs"
+            name="Kz_neg"
             )
         )
         fig2.add_trace(
@@ -381,7 +389,7 @@ if tog_tass == True:
             x=x_kz_acc_pos, 
             y=Kz_acc_pos,
             line={"color": "slateblue", 'width': 1, 'dash':'dash'},
-            name="qs_lim"
+            name="Kz_pos"
             )
         )
 
