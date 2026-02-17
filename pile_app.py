@@ -305,9 +305,9 @@ if tog_tass == True:
     tassement = pieu.settlement_curve()
     len_curve = len(tassement[1])
     x_acc_neg = []
-    x_acc_pos = []
+    x_acc_pos = [0]
     y_acc_neg = []
-    y_acc_pos = []
+    y_acc_pos = [0]
     # for x in tassement[1]:
     #     x_acc.append(1000 * x)
     # for y in tassement[0]:
@@ -319,6 +319,7 @@ if tog_tass == True:
         else:
             x_acc_pos.append(1000 * x)
             y_acc_pos.append(1000 * tassement[1][i])
+    x_acc_neg.append(0), y_acc_neg.append(0)
 
     fig = go.Figure()
 
@@ -327,7 +328,7 @@ if tog_tass == True:
         go.Scatter(
         x=x_acc_neg, 
         y=y_acc_neg,
-        line={"color": "teal", "dash":"dot"},
+        line={"color": "teal", "dash":"dash"},
         name="Negative Settlement"
         )
     )
