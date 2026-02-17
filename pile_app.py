@@ -329,7 +329,7 @@ if tog_tass == True:
         x=x_acc_neg, 
         y=y_acc_neg,
         line={"color": "teal", "dash":"dash"},
-        name="Negative Settlement"
+        name="Traction"
         )
     )
     fig.add_trace(
@@ -337,7 +337,7 @@ if tog_tass == True:
         x=x_acc_pos,
         y=y_acc_pos,
         line={"color": "teal"},
-        name="Positive Settlement"
+        name="Compression"
         )
     )
     fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
