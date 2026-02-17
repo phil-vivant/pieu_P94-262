@@ -278,9 +278,10 @@ with colB:
         f"""
     | Description |  |  |
     |:---|---:|---:|
+    | Pression limite nette équivalente : | $p_{{le*}}$ = | {round(pieu.ple_etoile, 3)} MPa |
+    | Hauteur d'encastrement effective : | $D_{{ef}}$ = | {round(pieu.hauteur_encastrement_effective, 3)} m |
     | Facteurs de portance pressiométrique : | $k_{{pmax}}$ = | {pieu.kp_max} |
     |  | $k_{{p}}$ = | {pieu.kp_util} |
-    | Hauteur d'encastrement effective : | $D_{{ef}}$ = | {round(pieu.hauteur_encastrement_effective, 3)} m |
     | Coefficients partiels de modèle : | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
     |  | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
     |  | $Ɣ_{{Rd2}}$ = | {pieu.gamma_rd2} |
