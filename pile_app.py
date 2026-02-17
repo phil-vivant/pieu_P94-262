@@ -317,25 +317,25 @@ if tog_tass == True:
     x_acc_neg.append(0), y_acc_neg.append(0)
 
 
-    x_em_acc_neg = []
-    Em_acc_neg = []
+    x_kz_acc_neg = []
+    Kz_acc_neg = []
     for i, y in enumerate(y_acc_neg):
         if y == 0:
             pass
         else:
             x = x_acc_neg[i]
-            x_em_acc_neg.append(x)
-            Em_acc_neg.append(x / y)
+            x_kz_acc_neg.append(x)
+            Kz_acc_neg.append(x / y)
 
-    x_em_acc_pos = []
-    Em_acc_pos = []
+    x_kz_acc_pos = []
+    Kz_acc_pos = []
     for i, y in enumerate(y_acc_pos):
         if y == 0:
             pass
         else:
             x = x_acc_pos[i]
-            x_em_acc_neg.append(x)
-            Em_acc_neg.append(x / y)
+            x_kz_acc_pos.append(x)
+            Kz_acc_pos.append(x / y)
 
     # fig = go.Figure()
 
@@ -392,16 +392,16 @@ if tog_tass == True:
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
-            x=x_em_acc_neg, 
-            y=Em_acc_neg,
+            x=x_kz_acc_neg, 
+            y=Kz_acc_neg,
             line={"color": "teal", 'width': 2},
             name="qs"
             )
         )
         fig2.add_trace(
             go.Scatter(
-            x=x_em_acc_pos, 
-            y=Em_acc_pos,
+            x=x_kz_acc_pos, 
+            y=Kz_acc_pos,
             line={"color": "slateblue", 'width': 1, 'dash':'dash'},
             name="qs_lim"
             )
