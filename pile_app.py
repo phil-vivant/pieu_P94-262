@@ -298,8 +298,8 @@ with colB:
 
 st.divider()
 
-st.subheader('Courbe de tassement du pieu')
-tog_tass = st.toggle("tracer la courbe de tassement", key="tog_tass")
+st.subheader('Courbe de tassement du pieu - Annexe L de la NF P94-262 - Méthode de Franck & Zhao')
+tog_tass = st.toggle("Tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
 
@@ -340,66 +340,6 @@ if tog_tass == True:
     x_kz_acc_pos = [q for (q, d) in pos if abs(d) > eps]
     Kz_acc_pos   = [q / d for (q, d) in pos if abs(d) > eps]
 
-
-    # tassement = pieu.settlement_curve()
-    # x_acc_neg = []
-    # x_acc_pos = [0]
-    # y_acc_neg = []
-    # y_acc_pos = [0]
-    # for i, x in enumerate(tassement[1]):
-    #     if x <= 0:
-    #         x_acc_neg.append(1000 * x)
-    #         y_acc_neg.append(1000 * tassement[0][i])
-    #     else:
-    #         x_acc_pos.append(1000 * x)
-    #         y_acc_pos.append(1000 * tassement[0][i])
-    # x_acc_neg.append(0), y_acc_neg.append(0)
-
-    # x_kz_acc_neg = []
-    # Kz_acc_neg = []
-    # for i, y in enumerate(y_acc_neg):
-    #     if y == 0:
-    #         pass
-    #     else:
-    #         x = x_acc_neg[i]
-    #         x_kz_acc_neg.append(x)
-    #         Kz_acc_neg.append(x / y)
-
-    # x_kz_acc_pos = []
-    # Kz_acc_pos = []
-    # for i, y in enumerate(y_acc_pos):
-    #     if y == 0:
-    #         pass
-    #     else:
-    #         x = x_acc_pos[i]
-    #         x_kz_acc_pos.append(x)
-    #         Kz_acc_pos.append(x / y)
-
-    # fig = go.Figure()
-
-    # # Plot lines
-    # fig.add_trace(
-    #     go.Scatter(
-    #     x=x_em_acc_neg, 
-    #     y=Em_acc_neg,
-    #     line={"color": "teal", "dash":"dash"},
-    #     name="Traction"
-    #     )
-    # )
-    # fig.add_trace(
-    #     go.Scatter(
-    #     x=x_em_acc_pos,
-    #     y=Em_acc_pos,
-    #     line={"color": "teal"},
-    #     name="Compression"
-    #     )
-    # )
-    # fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
-    # fig.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-    # fig.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
-
-    # st.plotly_chart(fig)
-
     col1, col2 = st.columns(2)
     with col1:
         # st.write('Tassement pieu/sol')
@@ -420,7 +360,7 @@ if tog_tass == True:
             name="Compression"
             )
         )
-        fig1.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
+        fig1.layout.title.text = "Courbe de tassement"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
         st.plotly_chart(fig1, use_container_width=True)
