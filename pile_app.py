@@ -307,7 +307,7 @@ st.divider()
 
 ###  ----------------- Capacités Résistantes du Pieu  ----------------- ###
 
-st.subheader('Capacité résistante du pieu')
+st.subheader('Capacités résistantes du pieu')
 
 colA, colB, colC = st.columns(3)
 with colA:
@@ -325,7 +325,7 @@ with colA:
 with colB:
     st.markdown(
         f"""
-    | Résistances en Compression |                  |                                        |
+    | Compression |                  |                                        |
     |:---                        |---:              |---:                                    |
     | ELS Quasi-Permanent :      | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN  |
     | ELS Caractéristique :      | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
@@ -337,7 +337,7 @@ with colB:
 with colC:
     st.markdown(
         f"""
-    | Résistances en Traction |                  |                                        |
+    | Traction |                  |                                        |
     |:---                     |---:              |---:                                    |
     | ELS Quasi-Permanent :   | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_QP: .1f} kN  |
     | ELS Caractéristique :   | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_Car: .1f} kN |
