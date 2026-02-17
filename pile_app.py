@@ -312,7 +312,7 @@ if tog_tass == True:
     #     x_acc.append(1000 * x)
     # for y in tassement[0]:
     #     y_acc.append(1000 * y)
-    for i, x in range(len_curve):
+    for i, x in enumerate(len(tassement[1])):
         if x <= 0:
             x_acc_neg.append(1000 * x)
             y_acc_neg.append(1000 * tassement[1][i])
