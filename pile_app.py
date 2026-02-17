@@ -282,12 +282,11 @@ with colB:
     st.subheader('Paramètres de calculs')
     st.markdown(
         f"""
-    | Description                            |                |                                                   |
-    |:---                                    |---:            |---:                                               |
-    | Pression limite nette équivalente :    | $p_{{le*}}$ =  | {round(pieu.ple_etoile, 3)} MPa                   |
-    | Hauteur d'encastrement effective :     | $D_{{ef}}$ =   | {round(pieu.hauteur_encastrement_effective, 3)} m |
-    | Facteurs de portance pressiométrique : | $k_{{pmax}}$ = | {pieu.kp_max}                                     |
-    |                                        | $k_{{p}}$ =    | {pieu.kp_util}                                    |
+    | Description                            |               |                                                   |
+    |:---                                    |---:           |---:                                               |
+    | Pression limite nette équivalente :    | $p_{{le*}}$ = | {round(pieu.ple_etoile, 3)} MPa                   |
+    | Hauteur d'encastrement effective :     | $D_{{ef}}$ =  | {round(pieu.hauteur_encastrement_effective, 3)} m |
+    | Facteur de portance pressiométrique :  | $k_{{p}}$ =   | {pieu.kp_util}                                    |
     """
     )
 
@@ -314,12 +313,12 @@ colA, colB, colC = st.columns(3)
 with colA:
     st.markdown(
         f"""
-    | Valeurs caractéristiques         |                  |                                           |
-    |:---                              |---:              |---:                                       |
-    | Résistance de pointe :           | $R_{{b}}$ =      | {1000 * pieu.Rbk: .1f} kN                 |
-    | Résistance de frottement axial : | $R_{{s}}$ =      | {1000 * pieu.Rsk_comp: .1f} kN            |
-    | Charge de fluage (compression) : | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN |
-    | Charge de fluage (traction) :    | $R_{{t;cr;k}}$ = | {1000 * pieu.traction_fluage_car: .1f} kN |
+    | Valeurs caractéristiques         |                  |                                                |
+    |:---                              |---:              |---:                                            |
+    | Résistance de pointe :           | $R_{{b}}$ =      | {1000 * pieu.resistance_pointe: .1f} kN        |
+    | Résistance de frottement axial : | $R_{{s}}$ =      | {1000 * pieu.resistance_skin_friction: .1f} kN |
+    | Charge de fluage (compression) : | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN      |
+    | Charge de fluage (traction) :    | $R_{{t;cr;k}}$ = | {1000 * pieu.traction_fluage_car: .1f} kN      |
     """
     )
 
