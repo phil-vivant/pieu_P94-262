@@ -12,7 +12,7 @@ import geotech_module.utils as utils
 
 st.set_page_config(
     page_title="Appli Pieu",
-    layout="wide",
+    layout="stretch",
     initial_sidebar_state="expanded",
 )
 
