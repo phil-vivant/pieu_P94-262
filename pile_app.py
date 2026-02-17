@@ -285,12 +285,12 @@ with colB:
     st.subheader('Compression')
     st.markdown(
         f"""
-    | Combinaisons |  | Valeur |
+    | Combinaisons |  |  | Valeur |
     |:---|---:|:---|
-    | ELS Quasi-Permanent : | $ELS_{{QP}}$ | {1000 * pieu.portance_ELS_QP: .1f} kN |
-    | ELS Caractéristique : | $ELS_{{Car}}$ | {1000 * pieu.portance_ELS_Car: .1f} kN |
-    | ELU Structural : | $ELU_{{Str}}$ | {1000 * pieu.portance_ELU_Str: .2f} kN |
-    | ELU Accidentel : | $ELU_{{Acc}}$ | {1000 * pieu.portance_ELU_Acc: .2f} kN |
+    | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN |
+    | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
+    | ELU Structural : | $ELU_{{Str}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Str: .2f} kN |
+    | ELU Accidentel : | $ELU_{{Acc}}$ | $R_{{cd}}$ = | {1000 * pieu.portance_ELU_Acc: .2f} kN |
     """
     )
 
