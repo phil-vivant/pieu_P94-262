@@ -296,7 +296,7 @@ with colA:
     st.markdown(
         f"""
     | Valeurs caractéristiques         |                  |                                           |
-    |:---                              |---:              |:---                                       |
+    |:---                              |---:              |---:                                       |
     | Résistance de pointe :           | $R_{{b}}$ =      | {1000 * pieu.Rbk: .1f} kN                 |
     | Résistance de frottement axial : | $R_{{s}}$ =      | {1000 * pieu.Rsk_comp: .1f} kN            |
     | Charge de fluage (compression) : | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN |
@@ -308,7 +308,7 @@ with colB:
     st.markdown(
         f"""
     | Résistances en Compression |               |                  |                                        |
-    |:---                        |:---:          |---:              |:---                                    |
+    |:---                        |:---:          |---:              |---:                                    |
     | ELS Quasi-Permanent :      | $ELS_{{QP}}$  | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN  |
     | ELS Caractéristique :      | $ELS_{{Car}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
     | ELU Structural :           | $ELU_{{Str}}$ | $R_{{cd}}$ =     | {1000 * pieu.portance_ELU_Str: .1f} kN |
@@ -461,8 +461,8 @@ if tog_equ == True:
     # with cola:
     st.markdown(
         f"""
-    | Principaux résultats                                  | Grandeur      | Valeur                           |
-    |:---                                                   |---:           |:---                              |
+    | Principaux résultats                                  |               |                                  |
+    |:---                                                   |---:           |---:                              |
     | Effort vertical en tête de pieu :                     | $Q_{{top}}$   | {q_target: .1f} kN               |
     | Effort de pointe :                                    | $Q_{{bot}}$   | {1000 * equilibre[1][0]: .1f} kN |
     | Déplacement vertical en tête de pieu :                | $dz_{{top}}$  | {1000 * equilibre[0]: .2f} mm    |
