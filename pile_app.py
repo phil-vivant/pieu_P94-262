@@ -11,9 +11,9 @@ import geotech_module.utils as utils
 
 
 st.set_page_config(
-    page_title="Mon appli",
-    layout="wide",          # <- force le wide
-    initial_sidebar_state="expanded",  # optionnel
+    page_title="Appli Pieu",
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 
@@ -259,7 +259,7 @@ pieu = Pile(
     thickness=interval / 1000
 )
 
-st.subheader('Description du pieu')
+st.subheader('Description du pieu au sens du tableau A1 de la NF P94-262 - Annexe A')
 # col1, col2 = st.columns([3, 1])
 # with col1:
 #     st.write('Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A :')
@@ -271,9 +271,9 @@ st.subheader('Description du pieu')
 #     st.write(pieu.abreviation_pieu)
 st.markdown(
     f"""
-|  |  |
+| Description |  |
 |:---|---:|
-| Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A : | {str(pieu.category)} |
+| Catégorie du pieu : | {str(pieu.category)} |
 | Classe du pieu : | {str(pieu.pile_classe)} |
 | {pieu.description} : | {pieu.abreviation_pieu} |
 """
