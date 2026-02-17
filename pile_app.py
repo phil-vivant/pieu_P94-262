@@ -253,17 +253,27 @@ pieu = Pile(
 )
 
 st.subheader('Description du pieu')
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.write('Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A :')
-    st.write('Classe du pieu :')
-    st.write(pieu.description, ' :')
-with col2:
-    st.write(str(pieu.category))
-    st.write(str(pieu.pile_classe))
-    st.write(pieu.abreviation_pieu)
-st.divider()
+# col1, col2 = st.columns([3, 1])
+# with col1:
+#     st.write('Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A :')
+#     st.write('Classe du pieu :')
+#     st.write(pieu.description, ' :')
+# with col2:
+#     st.write(str(pieu.category))
+#     st.write(str(pieu.pile_classe))
+#     st.write(pieu.abreviation_pieu)
+st.markdown(
+    f"""
+|  |  |  |
+|:---|---:|:---|
+| Catégorie du pieu au sens du tableau A1 de la NF P94-262 - Annexe A : | {str(pieu.category)} |
+| Classe du pieu : | {str(pieu.pile_classe)} |
+| pieu.description : | 'pieu.abreviation_pieu' |
+"""
+)
 
+
+st.divider()
 
 st.subheader('Capacité résistante du pieu')
 
