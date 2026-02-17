@@ -309,7 +309,7 @@ st.divider()
 
 st.subheader('Capacité résistante du pieu')
 
-colA, colB, colC = st.columns([5, 5, 4])
+colA, colB, colC = st.columns(3)
 with colA:
     st.markdown(
         f"""
