@@ -346,28 +346,20 @@ if tog_tass == True:
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
-            x=Q, 
-            y=dz,
+            x=x_acc_neg, 
+            y=y_acc_neg,
             line={"color": "teal", "dash":"dash"},
             name="Traction"
             )
         )
-        # fig1.add_trace(
-        #     go.Scatter(
-        #     x=x_acc_neg, 
-        #     y=y_acc_neg,
-        #     line={"color": "teal", "dash":"dash"},
-        #     name="Traction"
-        #     )
-        # )
-        # fig1.add_trace(
-        #     go.Scatter(
-        #     x=x_acc_pos,
-        #     y=y_acc_pos,
-        #     line={"color": "teal"},
-        #     name="Compression"
-        #     )
-        # )
+        fig1.add_trace(
+            go.Scatter(
+            x=x_acc_pos,
+            y=y_acc_pos,
+            line={"color": "teal"},
+            name="Compression"
+            )
+        )
         fig1.layout.title.text = "Courbe de tassement"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
@@ -380,7 +372,7 @@ if tog_tass == True:
             go.Scatter(
             x=x_kz_acc_neg, 
             y=Kz_acc_neg,
-            line={"color": "teal", 'width': 2},
+            line={"color": "slateblue", "dash": "dash", 'width': 2},
             name="Kz_neg"
             )
         )
@@ -388,7 +380,7 @@ if tog_tass == True:
             go.Scatter(
             x=x_kz_acc_pos, 
             y=Kz_acc_pos,
-            line={"color": "slateblue", 'width': 1, 'dash':'dash'},
+            line={"color": "slateblue", 'dash':'dash', 'width': 2},
             name="Kz_pos"
             )
         )
