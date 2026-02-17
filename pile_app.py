@@ -303,6 +303,7 @@ tog_tass = st.toggle("tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
     tassement = pieu.settlement_curve()
+    len_curve = len(tassement[1])
     x_acc_neg = []
     x_acc_pos = []
     y_acc_neg = []
@@ -311,7 +312,7 @@ if tog_tass == True:
     #     x_acc.append(1000 * x)
     # for y in tassement[0]:
     #     y_acc.append(1000 * y)
-    for i, x in range(tassement[1]):
+    for i, x in range(len_curve):
         if x <= 0:
             x_acc_neg.append(1000 * x)
             y_acc_neg.append(1000 * tassement[1][i])
