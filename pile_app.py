@@ -298,7 +298,7 @@ with colB:
 
 st.divider()
 
-st.subheader('Courbe de tassement du pieu - Annexe L de la NF P94-262 - Méthode de Franck & Zhao')
+st.subheader("Courbe de tassement du pieu - Méthode de Franck & Zhao suivant l'Annexe L de la NF P94-262")
 tog_tass = st.toggle("Tracer la courbe de tassement", key="tog_tass")
 
 if tog_tass == True:
@@ -380,7 +380,7 @@ if tog_tass == True:
             go.Scatter(
             x=x_kz_acc_pos, 
             y=Kz_acc_pos,
-            line={"color": "slateblue", 'dash':'dash', 'width': 2},
+            line={"color": "slateblue", 'width': 2},
             name="Kz_pos"
             )
         )
@@ -389,7 +389,6 @@ if tog_tass == True:
         fig2.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig2.layout.yaxis.title = "Raideur axiale en tête de pieu [MN/ml]"
         st.plotly_chart(fig2, use_container_width=True)
-
 
 st.divider()
 
