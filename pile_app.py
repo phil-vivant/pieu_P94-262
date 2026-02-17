@@ -446,6 +446,7 @@ if tog_equ == True:
         """
         )
 
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.write('Tassement pieu/sol')
         fig1 = go.Figure()
