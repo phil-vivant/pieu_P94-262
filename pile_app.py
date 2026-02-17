@@ -364,7 +364,7 @@ if tog_tass == True:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.write('Tassement pieu/sol')
+        # st.write('Tassement pieu/sol')
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
@@ -382,13 +382,13 @@ if tog_tass == True:
             name="Compression"
             )
         )
-        st.plotly_chart(fig1, use_container_width=True)
         fig1.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
+        fig1.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
 
     with col2:
-        st.write('Frottement pieu/sol')
+        # st.write('Frottement pieu/sol')
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
@@ -407,10 +407,10 @@ if tog_tass == True:
             )
         )
 
-        st.plotly_chart(fig2, use_container_width=True)
         fig2.layout.title.text = "Courbe de raideur axiale du pieu"
         fig2.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig2.layout.yaxis.title = "Raideur axiale en tête de pieu [MN/ml]"
+        st.plotly_chart(fig2, use_container_width=True)
 
 
 st.divider()
