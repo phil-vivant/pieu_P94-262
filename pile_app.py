@@ -427,23 +427,12 @@ if tog_equ == True:
 
     cola, colb = st.columns([3, 2])
     with cola:
-        st.write('Effort vertical en tête de pieu :')
-        st.write('Effort de pointe :')
-        st.write('Déplacement vertical en tête de pieu :')
-        st.write('Déplacement vertical au niveau de la pointe du pieu :')
-        st.write('Frottement maximum sur la hauteur du pieu :')
-    with colb:
-        # st.write(r"$Q_{top}$", f"= \t{q_target: .1f} kN")
-        # st.write(r"$Q_{bot}$", f"= \t{1000 * equilibre[1][0]: .1f} kN")
-        # st.write(r"$dz_{top}$", f"= \t{1000 * equilibre[0]: .2f} mm")
-        # st.write(f"dz_bot    = {1000 * equilibre[1][1]: .2f} mm")
-        # st.write(f"qs_max    = {1000 * qs_max: .2f} kPa")
         st.markdown(
             f"""
-        | Description | Grandeur | Valeur |
+        | Principaux résultats | Grandeur | Valeur |
         |:---|---:|:---|
         | Effort vertical en tête de pieu : | $Q_{{top}}$ | {q_target: .1f} kN |
-        | Effort de pointe : : | $Q_{{tbotp}}$ | {1000 * equilibre[1][0]: .1f} kN |
+        | Effort de pointe : | $Q_{{bot}}$ | {1000 * equilibre[1][0]: .1f} kN |
         | Déplacement vertical en tête de pieu : | $dz_{{top}}$ | {1000 * equilibre[0]: .2f} mm |
         | Déplacement vertical au niveau de la pointe du pieu : | $dz_{{bot}}$ | {1000 * equilibre[1][1]: .2f} mm |
         | Frottement maximum sur la hauteur du pieu : | $q_{{s,max}}$ | {1000 * qs_max: .2f} kPa |
