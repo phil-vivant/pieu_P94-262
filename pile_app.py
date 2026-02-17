@@ -269,10 +269,9 @@ st.subheader('Capacité résistante du pieu')
 
 colA, colB, colC = st.columns(3)
 with colA:
-    st.subheader('Valeurs caractéristiques')
     st.markdown(
         f"""
-    | Combinaisons |  | Valeur |
+    | Valeurs caractéristiques |  |  |
     |:---|---:|:---|
     | Résistance de pointe : | $R_{{b}}$ | {1000 * pieu.Rbk: .1f} kN |
     | Résistance de frottement axial : | $R_{{s}}$ | {1000 * pieu.Rsk_comp: .1f} kN |
@@ -282,10 +281,9 @@ with colA:
     )
 
 with colB:
-    st.subheader('Compression')
     st.markdown(
         f"""
-    | Résistance en Compression |  |  |  |
+    | Résistances en Compression |  |  |  |
     |:---|:---:|---:|:---|
     | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_QP: .1f} kN |
     | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{c;cr;d}}$ = | {1000 * pieu.portance_ELS_Car: .1f} kN |
@@ -295,10 +293,9 @@ with colB:
     )
 
 with colC:
-    st.subheader('Traction')
     st.markdown(
         f"""
-    | Résistance en Traction |  |  |  |
+    | Résistances en Traction |  |  |  |
     |:---|:---:|---:|:---|
     | ELS Quasi-Permanent : | $ELS_{{QP}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_QP: .1f} kN |
     | ELS Caractéristique : | $ELS_{{Car}}$ | $R_{{t;cr;d}}$ = | {1000 * pieu.traction_ELS_Car: .1f} kN |
