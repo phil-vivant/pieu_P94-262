@@ -337,30 +337,81 @@ if tog_tass == True:
             x_em_acc_neg.append(x)
             Em_acc_neg.append(x / y)
 
-    fig = go.Figure()
+    # fig = go.Figure()
 
-    # Plot lines
-    fig.add_trace(
-        go.Scatter(
-        x=x_em_acc_neg, 
-        y=Em_acc_neg,
-        line={"color": "teal", "dash":"dash"},
-        name="Traction"
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-        x=x_em_acc_pos,
-        y=Em_acc_pos,
-        line={"color": "teal"},
-        name="Compression"
-        )
-    )
-    fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
-    fig.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
-    fig.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
+    # # Plot lines
+    # fig.add_trace(
+    #     go.Scatter(
+    #     x=x_em_acc_neg, 
+    #     y=Em_acc_neg,
+    #     line={"color": "teal", "dash":"dash"},
+    #     name="Traction"
+    #     )
+    # )
+    # fig.add_trace(
+    #     go.Scatter(
+    #     x=x_em_acc_pos,
+    #     y=Em_acc_pos,
+    #     line={"color": "teal"},
+    #     name="Compression"
+    #     )
+    # )
+    # fig.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
+    # fig.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
+    # fig.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
 
-    st.plotly_chart(fig)
+    # st.plotly_chart(fig)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write('Tassement pieu/sol')
+        fig1 = go.Figure()
+        fig1.add_trace(
+            go.Scatter(
+            x=x_acc_neg, 
+            y=y_acc_neg,
+            line={"color": "teal", "dash":"dash"},
+            name="Traction"
+            )
+        )
+        fig1.add_trace(
+            go.Scatter(
+            x=x_acc_pos,
+            y=y_acc_pos,
+            line={"color": "teal"},
+            name="Compression"
+            )
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+        fig1.layout.title.text = "Courbe déterminée suivant l'annexe L de la NF P94-262 - Méthode de Franck & Zhao"
+        fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
+        fig1.layout.yaxis.title = "Déplacement vertical en tête de pieu [mm]"
+
+    with col2:
+        st.write('Frottement pieu/sol')
+        fig2 = go.Figure()
+        fig2.add_trace(
+            go.Scatter(
+            x=x_em_acc_neg, 
+            y=Em_acc_neg,
+            line={"color": "teal", 'width': 2},
+            name="qs"
+            )
+        )
+        fig2.add_trace(
+            go.Scatter(
+            x=x_em_acc_pos, 
+            y=Em_acc_pos,
+            line={"color": "slateblue", 'width': 1, 'dash':'dash'},
+            name="qs_lim"
+            )
+        )
+
+        st.plotly_chart(fig2, use_container_width=True)
+        fig2.layout.title.text = "Courbe de raideur axiale du pieu"
+        fig2.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
+        fig2.layout.yaxis.title = "Raideur axiale en tête de pieu [MN/ml]"
+
 
 st.divider()
 
