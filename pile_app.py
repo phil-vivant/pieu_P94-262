@@ -108,7 +108,7 @@ colA, colB = st.columns([10, 2])
 with colA:
     st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
 with colB:
-    st.image("img/pieu_2.png", use_container_width=True)
+    st.image("img/pieu_1.png", use_container_width=True)
 st.divider()
 
 persistence_ui()
