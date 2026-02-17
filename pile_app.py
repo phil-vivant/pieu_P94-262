@@ -496,7 +496,15 @@ if tog_equ == True:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.write('Tassement pieu/sol')
+        st.subheader('Tassement pieu/sol')
+    with col2:
+        st.subheader('Frottement pieu/sol')
+    with col3:
+        st.subheader('Effort dans le pieu')
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        # st.write('Tassement pieu/sol')
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
@@ -517,7 +525,7 @@ if tog_equ == True:
         st.plotly_chart(fig1, use_container_width=True)
         fig1.layout.title.text = "Tassement pieu/sol"
     with col2:
-        st.write('Frottement pieu/sol')
+        # st.write('Frottement pieu/sol')
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
@@ -538,7 +546,7 @@ if tog_equ == True:
 
         st.plotly_chart(fig2, use_container_width=True)
     with col3:
-        st.write('Effort dans le pieu')
+        # st.write('Effort dans le pieu')
         fig3 = go.Figure()
         fig3.add_trace(
             go.Scatter(
