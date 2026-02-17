@@ -288,11 +288,11 @@ with colC:
     st.subheader('Coefficients partiels')
     st.markdown(
         f"""
-    | Description                            |                    |                       |
-    |:---                                    |---:                |---:                   |
-    | Coefficients partiels de modèle :      | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
-    |                                        | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
-    |                                        | $Ɣ_{{Rd2}}$ =      | {pieu.gamma_rd2}      |
+    | Description              |                    |                       |
+    |:---                      |---:                |---:                   |
+    | Pour la compression :    | $Ɣ_{{Rd1,comp}}$ = | {pieu.gamma_rd1_comp} |
+    | Pour la traction :       | $Ɣ_{{Rd1,trac}}$ = | {pieu.gamma_rd1_trac} |
+    | Compression & Traction : | $Ɣ_{{Rd2}}$ =      | {pieu.gamma_rd2}      |
     """
     )
 
