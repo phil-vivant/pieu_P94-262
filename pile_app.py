@@ -317,7 +317,7 @@ with colA:
     |:---                              |---:              |---:                                            |
     | Résistance de pointe :           | $R_{{b}}$ =      | {1000 * pieu.resistance_pointe: .1f} kN        |
     | Résistance de frottement axial : | $R_{{s}}$ =      | {1000 * pieu.resistance_skin_friction: .1f} kN |
-    | Charge de fluage (compression) : | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN      |
+    | Charge de fluage (compr.) :      | $R_{{c;cr;k}}$ = | {1000 * pieu.portance_fluage_car: .1f} kN      |
     | Charge de fluage (traction) :    | $R_{{t;cr;k}}$ = | {1000 * pieu.traction_fluage_car: .1f} kN      |
     """
     )
