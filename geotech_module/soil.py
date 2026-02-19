@@ -85,7 +85,8 @@ class Soil:
     pl: float
     Em: float
     alpha: float
-    soil_type: str='granulaire'
+    friction_type: str='granulaire'
+    end_type: str='granulaire'
 
     def check_courbe_frottement(self) -> bool:
         """
@@ -101,7 +102,7 @@ class Soil:
         Doit être parmi ['fin', 'granulaire'].
         """
         types = ['fin', 'granulaire']
-        return self.soil_type in types
+        return self.friction_type in types
 
     def alpha_pieu_sol(self, categorie_pieu: int) -> float:
         """
@@ -158,9 +159,9 @@ class Soil:
         Module kt suivant l'annexe L de la NF P94-262, fonction du type de sol (fin ou granulaire).
         Permet de définir la loi de mobilisation du frottement axial.
         """
-        if self.soil_type == 'fin':
+        if self.friction_type == 'fin':
             return 2.0 * self.Em / B
-        elif self.soil_type == 'granulaire':
+        elif self.friction_type == 'granulaire':
             return 0.8 * self.Em / B
         else:
             return None
@@ -170,9 +171,9 @@ class Soil:
         Module kq suivant l'annexe L de la NF P94-262, fonction du type de sol (fin ou granulaire).
         Permet de définir la loi de mobilisation de l'effort de pointe.
         """
-        if self.soil_type == 'fin':
+        if self.end_type == 'fin':
             return 11. * self.Em / B
-        elif self.soil_type == 'granulaire':
+        elif self.end_type == 'granulaire':
             return 4.8 * self.Em / B
         else:
             return None

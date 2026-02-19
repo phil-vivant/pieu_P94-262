@@ -1,7 +1,6 @@
 import math
 import json
 from datetime import datetime
-import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 import hashlib
@@ -22,6 +21,24 @@ APP_STATE_KEYS = [
     # Pieu
     "pile_top", "pile_bot", "pile_cat", "pile_Eb", "pile_dp", "pile_ds", "pile_int",
 
+    # Lithologie
+    "soil_nb_layers",
+
+    # Sol A
+    "soil_a_name", "soil_a_zsup", "soil_a_zinf", "soil_a_curve", "soil_a_pf", "soil_a_pl", "soil_a_Em", "soil_a_alpha", "soil_a_type",
+
+    # Sol B
+    "soil_b_name", "soil_b_zsup", "soil_b_zinf", "soil_b_curve", "soil_b_pf", "soil_b_pl", "soil_b_Em", "soil_b_alpha", "soil_b_type",
+
+    # Sol C
+    "soil_c_name", "soil_c_zsup", "soil_c_zinf", "soil_c_curve", "soil_c_pf", "soil_c_pl", "soil_c_Em", "soil_c_alpha", "soil_c_type",
+
+    # Sol D
+    "soil_d_name", "soil_d_zsup", "soil_d_zinf", "soil_d_curve", "soil_d_pf", "soil_d_pl", "soil_d_Em", "soil_d_alpha", "soil_d_type",
+
+    # Sol E
+    "soil_e_name", "soil_e_zsup", "soil_e_zinf", "soil_e_curve", "soil_e_pf", "soil_e_pl", "soil_e_Em", "soil_e_alpha", "soil_e_type",
+
     # Toggles / actions
     "tog_tass",
     "tog_equ", "q_target",
@@ -30,64 +47,26 @@ APP_STATE_KEYS = [
     "trans_Eb", "trans_largeur", "trans_inertia", "trans_force", "trans_bending", "trans_situation",
     "tog_transversal",
 ]
-APP_SIMPLE_KEYS = [k for k in APP_STATE_KEYS if not k.startswith("soil_")]
 
 ROUND_FORCE = 1
 ROUND_DEPL = 2
 
 
-# def export_state(simple_keys):
-#     state = {}
+def export_state(keys):
+    return {k: st.session_state.get(k) for k in keys if k in st.session_state}
 
-#     # 1) Variables simples
-#     for k in simple_keys:
-#         if k in st.session_state:
-#             state[k] = st.session_state[k]
-
-#     # 2) Lithologie (table)
-#     df = st.session_state.get("soil_df", pd.DataFrame())
-#     state["soils"] = df.to_dict(orient="records")
-
-#     # (optionnel) Version de schéma
-#     state["_schema"] = "pieu_app_state_v2"
-
-#     return state
-
-def export_state(simple_keys):
-    state = {k: st.session_state[k] for k in simple_keys if k in st.session_state}
-
-    if "soil_df" not in st.session_state:
-        raise RuntimeError("soil_df absent de session_state (data_editor non initialisé ?).")
-
-    df = st.session_state["soil_df"]
-    if df is None or len(df) == 0:
-        st.warning("Attention : la table des sols est vide, export = soils: []")
-
-    state["soils"] = df.to_dict("records")
-    state["_schema"] = "pieu_app_state_v2"
-    return state
-
-def import_state(payload, simple_keys):
-    # 0) sanity check minimal
-    if "soils" not in payload or not isinstance(payload["soils"], list):
-        raise ValueError("Champ 'soils' manquant ou invalide (attendu: liste).")
-
-    # 1) Variables simples
-    for k in simple_keys:
+def import_state(payload, keys):
+    for k in keys:
         if k in payload:
             st.session_state[k] = payload[k]
 
-    # 2) Lithologie
-    st.session_state["soil_df"] = pd.DataFrame(payload["soils"])
-
-def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
+def persistence_ui(keys=APP_STATE_KEYS):
     with st.sidebar.expander("💾 Sauvegarde / Chargement", expanded=False):
         name = st.text_input("Nom du cas", value="cas_pieu", key="case_name")
 
         # Sauvegarde
-        data = export_state(simple_keys)
-        stamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
+        data = export_state(keys)
+        stamp = datetime.now().strftime("%Y-%m-%d - %Hh%Mmin%Ss")
         st.download_button(
             "⬇️ Sauver (.json)",
             data=json.dumps(data, ensure_ascii=False, indent=2),
@@ -96,7 +75,8 @@ def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
             use_container_width=True,
         )
 
-        # Clear uploader au run suivant (ton pattern est bon)
+        # --- Chargement ---
+        # Si un run précédent a demandé à "vider" l'uploader, on le fait AVANT d'instancier le widget
         if st.session_state.get("_clear_state_file", False):
             st.session_state.pop("state_file", None)
             st.session_state["_clear_state_file"] = False
@@ -110,14 +90,16 @@ def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
                     file_hash = hashlib.sha256(file_bytes).hexdigest()
 
                     payload = json.loads(file_bytes.decode("utf-8"))
-                    import_state(payload, simple_keys)
+                    import_state(payload, keys)
 
+                    # Mémorise que ce fichier a été chargé (optionnel mais utile)
                     st.session_state["_last_loaded_hash"] = file_hash
+
+                    # IMPORTANT : on demandera à vider l'uploader AU PROCHAIN run
                     st.session_state["_clear_state_file"] = True
 
                     st.toast("Paramètres chargés ✅")
                     st.rerun()
-
                 except Exception as e:
                     st.error(f"Fichier invalide : {e}")
 
@@ -129,94 +111,153 @@ with colB:
     st.image("img/pieu_1.png", use_container_width=True)
 st.divider()
 
+persistence_ui()
 
-###  ------------------- Définition des couches de sols  ------------------- ###
-
-st.subheader('Lithologie')
-
-z1_sup = st.number_input("Niveau supérieur de la première couche [NGF]", value=0.0, key="z1_sup")
-
-SOIL_COLS = ["name","zinf","curve","pf","pl","Em","alpha","type_frot","type_pointe"]
-
-def default_soils():
-    return pd.DataFrame([
-        {"name":"Marnes", "zinf":-5.0, "curve":"Q4", "pf":0.7, "pl":1.0, "Em":5.0, "alpha":0.67, "type_frot":"granulaire", "type_pointe":"fin"},
-        {"name":"Marnes", "zinf":-12.0, "curve":"Q4", "pf":2.5, "pl":5.0, "Em":20.0, "alpha":0.50, "type_frot":"granulaire", "type_pointe":"fin"},
-    ])[SOIL_COLS]
-
-if "soil_df" not in st.session_state:
-    st.session_state["soil_df"] = default_soils()
-
-edited = st.data_editor(
-    st.session_state.soil_df,
-    num_rows = "dynamic",
-    use_container_width = True,
-    column_config = {
-        "name": st.column_config.TextColumn("Description", required=True),
-        "curve": st.column_config.SelectboxColumn(
-            "Courbe",
-            options=["Q1", "Q12", "Q2", "Q3", "Q4", "Q5"],
-            required=True,
-        ),
-        "type_frot": st.column_config.SelectboxColumn(
-            "Frottement",
-            options=["granulaire", "fin"],
-            required=True,
-        ),
-        "type_pointe": st.column_config.SelectboxColumn(
-            "Pointe",
-            options=["granulaire", "fin"],
-            required=True,
-        ),
-        "zinf": st.column_config.NumberColumn("z_inf [m]", format="%.2f", step=0.01),
-        "pf": st.column_config.NumberColumn("pf [MPa]", format="%.2f", min_value=0.0, step=0.01),
-        "pl": st.column_config.NumberColumn("pl [MPa]", format="%.2f", min_value=0.0, step=0.01),
-        "Em": st.column_config.NumberColumn("Em [MPa]", format="%.1f", min_value=0.0, step=0.1),
-        "alpha": st.column_config.NumberColumn("α", format="%.2f", min_value=0.0, max_value=1.0, step=0.01),
-    },
-    key = "soil_editor",
-)
-
-# Nettoyage rapide (types + drop lignes vides)
-df = edited.copy()
-for c in ["zinf","pf","pl","Em","alpha"]:
-    df[c] = pd.to_numeric(df[c], errors="coerce")
-df = df.dropna(subset=["zinf", "pf", "pl", "Em", "alpha"], how="all").reset_index(drop=True)
-
-st.session_state["soil_df"] = df
-
-couches_sols = []
-z = z1_sup
-for row in st.session_state["soil_df"].to_dict("records"):
-    sol = Soil(
-        name=row["name"],
-        level_sup=z,
-        level_inf=float(row["zinf"]),
-        courbe_frottement=row["curve"],
-        pf=float(row["pf"] or 0.0),
-        pl=float(row["pl"] or 0.0),
-        Em=float(row["Em"] or 0.0),
-        alpha=float(row["alpha"] or 0.0),
-        friction_type=row["type_frot"],
-        end_type=row["type_pointe"],
-    )
-    couches_sols.append(sol)
-    z = float(row["zinf"])
-
-st.divider()
-
-###  ------------------------- Définition du Pieu  ------------------------- ###
+###  ----------------- Définition du Pieu  ----------------- ###
 
 # Pieu
 st.sidebar.title('Définition du pieu')
 level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", value=0.0, key="pile_top")
-level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", value=-10.0, key="pile_bot")
-categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", value=3, key="pile_cat")
-Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", value=10_000, key="pile_Eb")
-pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", value=800, key="pile_dp")
-pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", value=800, key="pile_ds")
-interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=50, key="pile_int")
+level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", value=-14.0, key="pile_bot")
+categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", value=19, key="pile_cat")
+Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", value=210_000, key="pile_Eb")
+pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", value=46.3, key="pile_dp")
+pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", value=88.9, key="pile_ds")
+interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=200, key="pile_int")
 
+
+###  ----------------- Définition des couches de sols  ----------------- ###
+
+st.subheader('Lithologie')
+nb_couches = st.number_input("Nombre de couches de sol à considérer pour l'étude du pieu (maxi 5) :", value = 4, key="soil_nb_layers")
+couches_sols = []
+
+# Sol A
+with st.expander("Couche de sol 'A'"):
+    sol_a_name = st.text_input("Sol 'A' - Descriptif de la couche de sol :", key="soil_a_name")
+    sol_a_level_sup = st.number_input("Sol 'A' - Niveau supérieur de la couche de sol :", value=0.0, key="soil_a_zsup")
+    sol_a_level_inf = st.number_input("Sol 'A' - Niveau inférieur de la couche de sol :", value=-1.0, key="soil_a_zinf")
+    sol_a_courbe_frottement = st.selectbox("Sol 'A' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_a_curve")
+    sol_a_pf = st.number_input("Sol 'A' - Pression de fluage moyenne [MPa] :", value=0.0, key="soil_a_pf")
+    sol_a_pl = st.number_input("Sol 'A' - Pression limite moyenne [MPa] :", value=0.0, key="soil_a_pl")
+    sol_a_Em = st.number_input("Sol 'A' - Module pressiométrique moyen [MPa] :", value=5.0, key="soil_a_Em")
+    sol_a_alpha = st.number_input("Sol 'A' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_a_alpha")
+    sol_a_type = st.selectbox("Sol 'A' - Type de sol :", ['granulaire', 'fin'], key="soil_a_type")
+
+    sol_A = Soil(
+        name=sol_a_name,
+        level_sup=sol_a_level_sup,
+        level_inf=sol_a_level_inf,
+        courbe_frottement=sol_a_courbe_frottement,
+        pf=sol_a_pf,
+        pl=sol_a_pl,
+        Em=sol_a_Em,
+        alpha=sol_a_alpha,
+        friction_type=sol_a_type,
+    )
+    couches_sols.append(sol_A)
+
+if nb_couches >=2:
+    with st.expander("Couche de sol 'B'"):
+        sol_b_name = st.text_input("Sol 'B' - Descriptif de la couche de sol :", key="soil_b_name")
+        sol_b_level_sup = st.number_input("Sol 'B' - Niveau supérieur de la couche de sol :", value=sol_a_level_inf, key="soil_b_zsup")
+        sol_b_level_inf = st.number_input("Sol 'B' - Niveau inférieur de la couche de sol :", value=-8.0, key="soil_b_zinf")
+        sol_b_courbe_frottement = st.selectbox("Sol 'B' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_b_curve")
+        sol_b_pf = st.number_input("Sol 'B' - Pression de fluage moyenne [MPa] :", value=0.8, key="soil_b_pf")
+        sol_b_pl = st.number_input("Sol 'B' - Pression limite moyenne [MPa] :", value=1.2, key="soil_b_pl")
+        sol_b_Em = st.number_input("Sol 'B' - Module pressiométrique moyen [MPa] :", value=8.0, key="soil_b_Em")
+        sol_b_alpha = st.number_input("Sol 'B' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_b_alpha")
+        sol_b_type = st.selectbox("Sol 'B' - Type de sol :", ['granulaire', 'fin'], key="soil_b_type")
+
+        sol_B = Soil(
+            name=sol_b_name,
+            level_sup=sol_b_level_sup,
+            level_inf=sol_b_level_inf,
+            courbe_frottement=sol_b_courbe_frottement,
+            pf=sol_b_pf,
+            pl=sol_b_pl,
+            Em=sol_b_Em,
+            alpha=sol_b_alpha,
+            friction_type=sol_b_type,
+        )
+    couches_sols.append(sol_B)
+
+if nb_couches >=3:
+    with st.expander("Couche de sol 'C'"):
+        sol_c_name = st.text_input("Sol 'C' - Descriptif de la couche de sol :", key="soil_c_name")
+        sol_c_level_sup = st.number_input("Sol 'C' - Niveau supérieur de la couche de sol :", value=sol_b_level_inf, key="soil_c_zsup")
+        sol_c_level_inf = st.number_input("Sol 'C' - Niveau inférieur de la couche de sol :", value=-12.0, key="soil_c_zinf")
+        sol_c_courbe_frottement = st.selectbox("Sol 'C' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_c_curve")
+        sol_c_pf = st.number_input("Sol 'C' - Pression de fluage moyenne [MPa] :", value=0.6, key="soil_c_pf")
+        sol_c_pl = st.number_input("Sol 'C' - Pression limite moyenne [MPa] :", value=0.8, key="soil_c_pl")
+        sol_c_Em = st.number_input("Sol 'C' - Module pressiométrique moyen [MPa] :", value=6.0, key="soil_c_Em")
+        sol_c_alpha = st.number_input("Sol 'C' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_c_alpha")
+        sol_c_type = st.selectbox("Sol 'C' - Type de sol :", ['granulaire', 'fin'], key="soil_c_type")
+
+        sol_C = Soil(
+            name=sol_c_name,
+            level_sup=sol_c_level_sup,
+            level_inf=sol_c_level_inf,
+            courbe_frottement=sol_c_courbe_frottement,
+            pf=sol_c_pf,
+            pl=sol_c_pl,
+            Em=sol_c_Em,
+            alpha=sol_c_alpha,
+            friction_type=sol_c_type,
+        )
+    couches_sols.append(sol_C)
+
+if nb_couches >=4:
+    with st.expander("Couche de sol 'D'"):
+        sol_d_name = st.text_input("Sol 'D' - Descriptif de la couche de sol :", key="soil_d_name")
+        sol_d_level_sup = st.number_input("Sol 'D' - Niveau supérieur de la couche de sol :", value=sol_c_level_inf, key="soil_d_zsup")
+        sol_d_level_inf = st.number_input("Sol 'D' - Niveau inférieur de la couche de sol :", value=-20.0, key="soil_d_zinf")
+        sol_d_courbe_frottement = st.selectbox("Sol 'D' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_d_curve")
+        sol_d_pf = st.number_input("Sol 'D' - Pression de fluage moyenne [MPa] :", value=1.3, key="soil_d_pf")
+        sol_d_pl = st.number_input("Sol 'D' - Pression limite moyenne [MPa] :", value=1.8, key="soil_d_pl")
+        sol_d_Em = st.number_input("Sol 'D' - Module pressiométrique moyen [MPa] :", value=10.0, key="soil_d_Em")
+        sol_d_alpha = st.number_input("Sol 'D' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_d_alpha")
+        sol_d_type = st.selectbox("Sol 'D' - Type de sol :", ['granulaire', 'fin'], key="soil_d_type")
+
+        sol_D = Soil(
+            name=sol_d_name,
+            level_sup=sol_d_level_sup,
+            level_inf=sol_d_level_inf,
+            courbe_frottement=sol_d_courbe_frottement,
+            pf=sol_d_pf,
+            pl=sol_d_pl,
+            Em=sol_d_Em,
+            alpha=sol_d_alpha,
+            friction_type=sol_d_type,
+        )
+    couches_sols.append(sol_D)
+
+if nb_couches >=5:
+    with st.expander("Couche de sol 'E'"):
+        sol_e_name = st.text_input("Sol 'E' - Descriptif de la couche de sol :", key="soil_e_name")
+        sol_e_level_sup = st.number_input("Sol 'E' - Niveau supérieur de la couche de sol :", value=sol_d_level_inf, key="soil_e_zsup")
+        sol_e_level_inf = st.number_input("Sol 'E' - Niveau inférieur de la couche de sol :", value=-30.0, key="soil_e_zinf")
+        sol_e_courbe_frottement = st.selectbox("Sol 'E' - Courbe de frottement :", ['Q1', 'Q12', 'Q2', 'Q3', 'Q4', 'Q5'], key="soil_e_curve")
+        sol_e_pf = st.number_input("Sol 'E' - Pression de fluage moyenne [MPa] :", value=1.3, key="soil_e_pf")
+        sol_e_pl = st.number_input("Sol 'E' - Pression limite moyenne [MPa] :", value=1.8, key="soil_e_pl")
+        sol_e_Em = st.number_input("Sol 'E' - Module pressiométrique moyen [MPa] :", value=10.0, key="soil_e_Em")
+        sol_e_alpha = st.number_input("Sol 'E' - Coefficient alpha - suivant étude géotechnique :", value=0.67, key="soil_e_alpha")
+        sol_e_type = st.selectbox("Sol 'E' - Type de sol :", ['granulaire', 'fin'], key="soil_e_type")
+
+        sol_E = Soil(
+            name=sol_e_name,
+            level_sup=sol_e_level_sup,
+            level_inf=sol_e_level_inf,
+            courbe_frottement=sol_e_courbe_frottement,
+            pf=sol_e_pf,
+            pl=sol_e_pl,
+            Em=sol_e_Em,
+            alpha=sol_e_alpha,
+            friction_type=sol_e_type,
+        )
+    couches_sols.append(sol_E)
+
+st.divider()
 
 pieu = Pile(
     category=categorie,
@@ -268,7 +309,7 @@ with colC:
 st.divider()
 
 
-###  -------------------  Capacités Résistantes du Pieu  ------------------- ###
+###  ----------------- Capacités Résistantes du Pieu  ----------------- ###
 
 st.subheader('Capacités résistantes du pieu')
 
@@ -311,7 +352,7 @@ with colC:
 
 st.divider()
 
-###  ------------------------  Courbe de tassement  ------------------------ ###
+###  ----------------- Courbe de tassement  ----------------- ###
 
 st.subheader("Courbe de tassement du pieu - Méthode de Franck & Zhao - NF P94-262 Annexe L")
 tog_tass = st.toggle("Tracer la courbe de tassement", key="tog_tass")
@@ -358,6 +399,7 @@ if tog_tass == True:
 
     col1, col2 = st.columns(2)
     with col1:
+        # st.write('Tassement pieu/sol')
         fig1 = go.Figure()
         fig1.add_trace(
             go.Scatter(
@@ -381,6 +423,7 @@ if tog_tass == True:
         st.plotly_chart(fig1, use_container_width=True)
 
     with col2:
+        # st.write('Frottement pieu/sol')
         fig2 = go.Figure()
         fig2.add_trace(
             go.Scatter(
@@ -406,7 +449,7 @@ if tog_tass == True:
 
 st.divider()
 
-###  ---------------- Étude de l'équilibre général du pieu  ---------------- ###
+###  ----------------- Étude de l'équilibre général du pieu  ----------------- ###
 
 st.subheader('Équilibre pour un chargement vertical donné')
 
@@ -418,7 +461,7 @@ if tog_equ == True:
         "Charge verticale en tête de pieu [kN] :",
         min_value=resistance_mini,
         max_value=resistance_maxi,
-        value=1500,
+        value=380,
         key="q_target"
     )
 
@@ -522,8 +565,6 @@ if tog_equ == True:
 
 
 st.divider()
-
-###  -------------- Comportement transversal de la fondation  -------------- ###
 
 st.subheader('Comportement transversal de la fondation  ⚠️ En cours !')
 
@@ -632,6 +673,3 @@ if tog_transversal == True:
         )
         fig3.layout.title.text = "Déplacement horizontal"
         st.plotly_chart(fig3, use_container_width=True)
-
-persistence_ui()
-
