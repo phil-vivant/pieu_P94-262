@@ -569,15 +569,13 @@ st.divider()
 st.subheader('Comportement transversal de la fondation  ⚠️ En cours !')
 
 # Données complémentaires
-calA, colB = st.columns(2)
-with colA:
-    with st.expander("Données :"):
-        Eb_trans = st.number_input("Module d'Young du pieu [MPa] :", value=20_000, key="trans_Eb")
-        largeur = st.number_input("Largeur perpendiculaire au sens de déplacement [m] :", value=0.250, key="trans_largeur")
-        inertia = st.number_input("Moment d'inertie du pieu [m4] :", value=0.001, key="trans_inertia")
-        force = st.number_input("Force horizontale en tête de pieu [kN] :", value=0.0, key="trans_force")
-        bending = st.number_input("Moment fléchissant en tête de pieu [kN.m] :", value=0.0, key="trans_bending")
-        comb_situation = st.selectbox("Situation :", ['court terme', 'long terme', 'ELU', 'sismique'], key="trans_situation")
+with st.expander("Données :"):
+    Eb_trans = st.number_input("Module d'Young du pieu [MPa] :", value=20_000, key="trans_Eb")
+    largeur = st.number_input("Largeur perpendiculaire au sens de déplacement [m] :", value=0.250, key="trans_largeur")
+    inertia = st.number_input("Moment d'inertie du pieu [m4] :", value=0.001, key="trans_inertia")
+    force = st.number_input("Force horizontale en tête de pieu [kN] :", value=0.0, key="trans_force")
+    bending = st.number_input("Moment fléchissant en tête de pieu [kN.m] :", value=0.0, key="trans_bending")
+    comb_situation = st.selectbox("Situation :", ['court terme', 'long terme', 'ELU', 'sismique'], key="trans_situation")
 
 tog_transversal = st.toggle("Lancer le calcul", key="tog_transversal")
 if tog_transversal == True:
