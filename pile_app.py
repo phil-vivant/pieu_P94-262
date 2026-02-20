@@ -19,6 +19,9 @@ st.set_page_config(
 
 
 APP_STATE_KEYS = [
+    # Sol
+    "z1_sup",
+
     # Pieu
     "pile_top", "pile_bot", "pile_cat", "pile_Eb", "pile_dp", "pile_ds", "pile_int",
 
@@ -35,56 +38,77 @@ APP_SIMPLE_KEYS = [k for k in APP_STATE_KEYS if not k.startswith("soil_")]
 ROUND_FORCE = 1
 ROUND_DEPL = 2
 
+DEFAULTS = {
+    # Sol
+    "z1_sup": 0.0,
+    # Pieu
+    "pile_top": 0.0,
+    "pile_bot": -10.0,
+    "pile_cat": 3,
+    "pile_Eb": 10_000,
+    "pile_dp": 800,
+    "pile_ds": 800,
+    "pile_int": 50,
 
-# def export_state(simple_keys):
-#     state = {}
+    # Toggles / actions
+    "tog_tass": False,
+    "tog_equ": False,
+    "q_target": 1500.0,
 
-#     # 1) Variables simples
-#     for k in simple_keys:
-#         if k in st.session_state:
-#             state[k] = st.session_state[k]
+    # Transversal
+    "trans_Eb": 10_000,
+    "trans_largeur": 1.0,
+    "trans_inertia": 1.0,
+    "trans_force": 100.0,
+    "trans_bending": 100.0,
+    "trans_situation": "ELS",
+    "tog_transversal": False,
 
-#     # 2) Lithologie (table)
-#     df = st.session_state.get("soil_df", pd.DataFrame())
-#     state["soils"] = df.to_dict(orient="records")
+    # (optionnel) UI
+    "case_name": "NDC_Pieu",
+}
 
-#     # (optionnel) Version de schéma
-#     state["_schema"] = "pieu_app_state_v2"
+# Initialisation des clés "simples"
+for k, v in DEFAULTS.items():
+    st.session_state.setdefault(k, v)
 
-#     return state
 
-def export_state(simple_keys):
-    state = {k: st.session_state[k] for k in simple_keys if k in st.session_state}
+###  ----------------------  Sauvegarde / Chargement  ---------------------- ###
 
-    if "soil_df" not in st.session_state:
-        raise RuntimeError("soil_df absent de session_state (data_editor non initialisé ?).")
 
-    df = st.session_state["soil_df"]
-    if df is None or len(df) == 0:
-        st.warning("Attention : la table des sols est vide, export = soils: []")
+def export_state(simple_keys, defaults=DEFAULTS):
+    state = {}
 
-    state["soils"] = df.to_dict("records")
+    # 1) Variables simples (jamais vides)
+    for k in simple_keys:
+        state[k] = st.session_state.get(k, defaults.get(k))
+
+    # 2) Lithologie
+    df = st.session_state.get("soil_df", pd.DataFrame())
+    state["soils"] = df.to_dict(orient="records")
+
     state["_schema"] = "pieu_app_state_v2"
     return state
 
-def import_state(payload, simple_keys):
-    # 0) sanity check minimal
+
+def import_state(payload, simple_keys, defaults=DEFAULTS):
     if "soils" not in payload or not isinstance(payload["soils"], list):
         raise ValueError("Champ 'soils' manquant ou invalide (attendu: liste).")
 
-    # 1) Variables simples
+    # Variables simples : si absent dans le fichier -> on garde l'existant (ou defaults déjà posés)
     for k in simple_keys:
         if k in payload:
             st.session_state[k] = payload[k]
+        else:
+            st.session_state.setdefault(k, defaults.get(k))
 
-    # 2) Lithologie
+    # Lithologie
     st.session_state["soil_df"] = pd.DataFrame(payload["soils"])
 
 def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
     with st.sidebar.expander("💾 Sauvegarde / Chargement", expanded=False):
-        name = st.text_input("Nom du cas", value="cas_pieu", key="case_name")
+        name = st.text_input("Nom du cas", key="case_name")
 
-        # Sauvegarde
         data = export_state(simple_keys)
         stamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -96,7 +120,6 @@ def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
             use_container_width=True,
         )
 
-        # Clear uploader au run suivant (ton pattern est bon)
         if st.session_state.get("_clear_state_file", False):
             st.session_state.pop("state_file", None)
             st.session_state["_clear_state_file"] = False
@@ -108,18 +131,21 @@ def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
                 try:
                     file_bytes = up.getvalue()
                     file_hash = hashlib.sha256(file_bytes).hexdigest()
-
                     payload = json.loads(file_bytes.decode("utf-8"))
+
                     import_state(payload, simple_keys)
 
                     st.session_state["_last_loaded_hash"] = file_hash
                     st.session_state["_clear_state_file"] = True
-
                     st.toast("Paramètres chargés ✅")
                     st.rerun()
 
                 except Exception as e:
                     st.error(f"Fichier invalide : {e}")
+
+
+###  ------------------------------  En-tête  ------------------------------ ###
+
 
 st.divider()
 colA, colB = st.columns([8, 2])
@@ -134,7 +160,7 @@ st.divider()
 
 st.subheader('Lithologie')
 
-z1_sup = st.number_input("Niveau supérieur de la première couche [NGF]", value=0.0, key="z1_sup")
+z1_sup = st.number_input("Niveau supérieur de la première couche [NGF]", key="z1_sup")
 
 SOIL_COLS = ["name","zinf","curve","pf","pl","Em","alpha","type_frot","type_pointe"]
 
@@ -181,6 +207,7 @@ edited = st.data_editor(
 df = edited.copy()
 for c in ["zinf","pf","pl","Em","alpha"]:
     df[c] = pd.to_numeric(df[c], errors="coerce")
+# si ligne vide --> Drop
 df = df.dropna(subset=["zinf", "pf", "pl", "Em", "alpha"], how="all").reset_index(drop=True)
 
 st.session_state["soil_df"] = df
@@ -205,17 +232,25 @@ for row in st.session_state["soil_df"].to_dict("records"):
 
 st.divider()
 
+
+
+###  -------------------  Appel du bouton de sauvegarde  ------------------- ###
+
+persistence_ui()
+
+
 ###  ------------------------- Définition du Pieu  ------------------------- ###
+
 
 # Pieu
 st.sidebar.title('Définition du pieu')
-level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", value=0.0, key="pile_top")
-level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", value=-10.0, key="pile_bot")
-categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", value=3, key="pile_cat")
-Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", value=10_000, key="pile_Eb")
-pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", value=800, key="pile_dp")
-pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", value=800, key="pile_ds")
-interval = st.sidebar.number_input("Discretisation du pieu [mm]", value=50, key="pile_int")
+level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", key="pile_top")
+level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", key="pile_bot")
+categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", min_value=1, step=1, key="pile_cat")
+Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", key="pile_Eb")
+pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", key="pile_dp")
+pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", key="pile_ds")
+interval = st.sidebar.number_input("Discretisation du pieu [mm]", key="pile_int")
 
 
 pieu = Pile(
@@ -226,10 +261,10 @@ pieu = Pile(
     Dp=pieu_dp / 1000,
     Ds=pieu_ds / 1000,
     lithology=couches_sols,
-    thickness=interval / 1000
+    thickness=interval / 1000,
 )
 
-colA, colB, colC = st.columns([7, 8, 7])
+colA, colB, colC = st.columns(3)
 with colA:
     st.subheader('Description du pieu')
     st.markdown(
@@ -270,9 +305,10 @@ st.divider()
 
 ###  -------------------  Capacités Résistantes du Pieu  ------------------- ###
 
+
 st.subheader('Capacités résistantes du pieu')
 
-colA, colB, colC = st.columns([7, 6, 6])
+colA, colB, colC = st.columns(3)
 with colA:
     st.markdown(
         f"""
@@ -311,7 +347,9 @@ with colC:
 
 st.divider()
 
+
 ###  ------------------------  Courbe de tassement  ------------------------ ###
+
 
 st.subheader("Courbe de tassement du pieu - Méthode de Franck & Zhao - NF P94-262 Annexe L")
 tog_tass = st.toggle("Tracer la courbe de tassement", key="tog_tass")
@@ -406,7 +444,9 @@ if tog_tass == True:
 
 st.divider()
 
+
 ###  ---------------- Étude de l'équilibre général du pieu  ---------------- ###
+
 
 st.subheader('Équilibre pour un chargement vertical donné')
 
@@ -523,17 +563,19 @@ if tog_equ == True:
 
 st.divider()
 
+
 ###  -------------- Comportement transversal de la fondation  -------------- ###
+
 
 st.subheader('Comportement transversal de la fondation  ⚠️ En cours !')
 
 # Données complémentaires
 with st.expander("Données :"):
-    Eb_trans = st.number_input("Module d'Young du pieu [MPa] :", value=20_000, key="trans_Eb")
-    largeur = st.number_input("Largeur perpendiculaire au sens de déplacement [m] :", value=0.250, key="trans_largeur")
-    inertia = st.number_input("Moment d'inertie du pieu [m4] :", value=0.001, key="trans_inertia")
-    force = st.number_input("Force horizontale en tête de pieu [kN] :", value=0.0, key="trans_force")
-    bending = st.number_input("Moment fléchissant en tête de pieu [kN.m] :", value=0.0, key="trans_bending")
+    Eb_trans = st.number_input("Module d'Young du pieu [MPa] :", key="trans_Eb")
+    largeur = st.number_input("Largeur perpendiculaire au sens de déplacement [m] :", key="trans_largeur")
+    inertia = st.number_input("Moment d'inertie du pieu [m4] :", key="trans_inertia")
+    force = st.number_input("Force horizontale en tête de pieu [kN] :", key="trans_force")
+    bending = st.number_input("Moment fléchissant en tête de pieu [kN.m] :", key="trans_bending")
     comb_situation = st.selectbox("Situation :", ['court terme', 'long terme', 'ELU', 'sismique'], key="trans_situation")
 
 tog_transversal = st.toggle("Lancer le calcul", key="tog_transversal")
@@ -632,6 +674,4 @@ if tog_transversal == True:
         )
         fig3.layout.title.text = "Déplacement horizontal"
         st.plotly_chart(fig3, use_container_width=True)
-
-persistence_ui()
 

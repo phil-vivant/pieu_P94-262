@@ -367,7 +367,7 @@ class Pile:
         """
         Renvoie la classe de la fondation (fonction de la catégorie) suivant le tableau A1 de la norme.
         """
-        return TAB_A1[str(self.category)]['Classe']
+        return TAB_A1[str(int(self.category))]['Classe']
 
     @property
     def abreviation_pieu(self) -> int:
