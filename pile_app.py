@@ -10,6 +10,8 @@ from geotech_module.pieu import Pile
 from geotech_module.soil import Soil
 import geotech_module.utils as utils
 
+from ui_sections import build_pile_sidebar
+
 
 st.set_page_config(
     page_title="Appli Pieu",
@@ -23,20 +25,24 @@ APP_STATE_KEYS = [
     "z1_sup",
 
     # Pieu
-    "pile_top", "pile_bot", "pile_cat", "pile_Eb", "pile_dp", "pile_ds", "pile_int",
+    "pile_top", "pile_bot", "pile_cat", "pile_Eb", "pile_dp",
+    "pile_ds", "pile_int",
 
     # Toggles / actions
     "tog_tass",
     "tog_equ", "q_target",
 
     # Transversal
-    "trans_Eb", "trans_largeur", "trans_inertia", "trans_force", "trans_bending", "trans_situation",
+    "trans_Eb", "trans_largeur", "trans_inertia", "trans_force",
+    "trans_bending", "trans_situation",
     "tog_transversal",
 ]
 APP_SIMPLE_KEYS = [k for k in APP_STATE_KEYS if not k.startswith("soil_")]
 
+
 ROUND_FORCE = 1
 ROUND_DEPL = 2
+
 
 DEFAULTS = {
     # Sol
@@ -61,12 +67,29 @@ DEFAULTS = {
     "trans_inertia": 1.0,
     "trans_force": 100.0,
     "trans_bending": 100.0,
-    "trans_situation": "ELS",
+    "trans_situation": "court terme",
     "tog_transversal": False,
 
     # (optionnel) UI
     "case_name": "NDC_Pieu",
 }
+
+
+SOIL_COLS = ["name", "zinf", "curve", "pf", "pl", "Em", "alpha", "type_frot", "type_pointe"]
+
+
+def default_soils():
+    return pd.DataFrame([
+        {
+            "name": "Marnes", "zinf": -5.0, "curve": "Q4", "pf": 0.7, "pl": 1.0,
+            "Em": 5.0, "alpha": 2/3, "type_frot": "granulaire", "type_pointe": "fin"
+        },
+        {
+            "name": "Marnes", "zinf": -12.0, "curve": "Q4", "pf": 2.5, "pl": 5.0,
+            "Em": 20.0, "alpha": 1/2, "type_frot": "granulaire", "type_pointe": "fin"
+        },
+    ])[SOIL_COLS]
+
 
 # Initialisation des clés "simples"
 for k, v in DEFAULTS.items():
@@ -79,11 +102,11 @@ for k, v in DEFAULTS.items():
 def export_state(simple_keys, defaults=DEFAULTS):
     state = {}
 
-    # 1) Variables simples (jamais vides)
+    # 1) Variables simples
     for k in simple_keys:
         state[k] = st.session_state.get(k, defaults.get(k))
 
-    # 2) Lithologie
+    # 2) Lithologie (version appliquée)
     df = st.session_state.get("soil_df", pd.DataFrame())
     state["soils"] = df.to_dict(orient="records")
 
@@ -95,15 +118,36 @@ def import_state(payload, simple_keys, defaults=DEFAULTS):
     if "soils" not in payload or not isinstance(payload["soils"], list):
         raise ValueError("Champ 'soils' manquant ou invalide (attendu: liste).")
 
-    # Variables simples : si absent dans le fichier -> on garde l'existant (ou defaults déjà posés)
+    # Variables simples
     for k in simple_keys:
         if k in payload:
-            st.session_state[k] = payload[k]
+            # petits casts utiles
+            if k in {"pile_cat", "pile_int"}:
+                st.session_state[k] = int(payload[k])
+            elif isinstance(defaults.get(k), bool):
+                st.session_state[k] = bool(payload[k])
+            elif isinstance(defaults.get(k), int):
+                st.session_state[k] = int(payload[k])
+            elif isinstance(defaults.get(k), float):
+                st.session_state[k] = float(payload[k])
+            else:
+                st.session_state[k] = payload[k]
         else:
             st.session_state.setdefault(k, defaults.get(k))
 
     # Lithologie
     st.session_state["soil_df"] = pd.DataFrame(payload["soils"])
+
+
+# --- Import différé : exécuté AVANT les widgets ---
+if "_pending_import_payload" in st.session_state:
+    try:
+        payload = st.session_state.pop("_pending_import_payload")
+        import_state(payload, APP_SIMPLE_KEYS)
+        st.session_state["_import_ok"] = True
+    except Exception as e:
+        st.session_state["_import_error"] = str(e)
+
 
 def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
     with st.sidebar.expander("💾 Sauvegarde / Chargement", expanded=False):
@@ -117,9 +161,10 @@ def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
             data=json.dumps(data, ensure_ascii=False, indent=2),
             file_name=f"{name}_{stamp}.json",
             mime="application/json",
-            use_container_width=True,
+            width="stretch",
         )
 
+        # reset uploader au run suivant
         if st.session_state.get("_clear_state_file", False):
             st.session_state.pop("state_file", None)
             st.session_state["_clear_state_file"] = False
@@ -127,21 +172,29 @@ def persistence_ui(simple_keys=APP_SIMPLE_KEYS):
         up = st.file_uploader("⬆️ Charger (.json)", type=["json"], key="state_file")
 
         if up is not None:
-            if st.button("✅ Appliquer le fichier", use_container_width=True, key="apply_state"):
+            if st.button("✅ Appliquer le fichier", width="stretch", key="apply_state"):
                 try:
                     file_bytes = up.getvalue()
                     file_hash = hashlib.sha256(file_bytes).hexdigest()
                     payload = json.loads(file_bytes.decode("utf-8"))
 
-                    import_state(payload, simple_keys)
-
+                    # ✅ IMPORT DIFFÉRÉ (et non import_state direct)
+                    st.session_state["_pending_import_payload"] = payload
                     st.session_state["_last_loaded_hash"] = file_hash
                     st.session_state["_clear_state_file"] = True
-                    st.toast("Paramètres chargés ✅")
+
                     st.rerun()
 
                 except Exception as e:
                     st.error(f"Fichier invalide : {e}")
+
+
+# Messages post-import
+if st.session_state.pop("_import_ok", False):
+    st.toast("Paramètres chargés ✅")
+
+if "_import_error" in st.session_state:
+    st.error(f"Fichier invalide : {st.session_state.pop('_import_error')}")
 
 
 ###  ------------------------------  En-tête  ------------------------------ ###
@@ -152,32 +205,118 @@ colA, colB = st.columns([8, 2])
 with colA:
     st.title("Dimensionnement d'une fondation profonde isolée suivant la norme NF P94-262")
 with colB:
-    st.image("img/pieu_1.png", use_container_width=True)
+    st.image("img/pieu_1.png", width="stretch")
 st.divider()
 
 
 ###  ------------------- Définition des couches de sols  ------------------- ###
 
-st.subheader('Lithologie')
+st.subheader("Lithologie")
 
-z1_sup = st.number_input("Niveau supérieur de la première couche [NGF]", key="z1_sup")
+ctl1, ctl2 = st.columns([3, 2])
 
-SOIL_COLS = ["name","zinf","curve","pf","pl","Em","alpha","type_frot","type_pointe"]
+with ctl1:
+    z1_sup = st.number_input(
+        "Niveau supérieur de la première couche [NGF]",
+        key="z1_sup",
+        step=0.01,
+    )
 
-def default_soils():
-    return pd.DataFrame([
-        {"name":"Marnes", "zinf":-5.0, "curve":"Q4", "pf":0.7, "pl":1.0, "Em":5.0, "alpha":0.67, "type_frot":"granulaire", "type_pointe":"fin"},
-        {"name":"Marnes", "zinf":-12.0, "curve":"Q4", "pf":2.5, "pl":5.0, "Em":20.0, "alpha":0.50, "type_frot":"granulaire", "type_pointe":"fin"},
-    ])[SOIL_COLS]
+def normalize_soils_df(df: pd.DataFrame) -> pd.DataFrame:
+    """Nettoyage léger + normalisation (sans validation métier)."""
+    out = df.copy()
 
+    # Garantir les colonnes attendues
+    for c in SOIL_COLS:
+        if c not in out.columns:
+            out[c] = None
+    out = out[SOIL_COLS]
+
+    # Conversions numériques
+    for c in ["zinf", "pf", "pl", "Em", "alpha"]:
+        out[c] = pd.to_numeric(out[c], errors="coerce")
+
+    # Supprimer lignes vides (on considère qu'une ligne sans zinf n'est pas exploitable)
+    out = out.dropna(subset=["zinf"], how="all").reset_index(drop=True)
+
+    # Normalisations
+    out["name"] = out["name"].fillna("").astype(str)
+    out.loc[out["name"].str.strip() == "", "name"] = "Couche"
+
+    defaults_fill = {
+        "curve": "Q1",
+        "pf": 0.0,
+        "pl": 0.0,
+        "Em": 0.0,
+        "alpha": 0.67,
+        "type_frot": "granulaire",
+        "type_pointe": "fin",
+    }
+    for c, v in defaults_fill.items():
+        out[c] = out[c].fillna(v)
+
+    return out
+
+def validate_soils_df(df: pd.DataFrame, z1_sup_value: float) -> list[str]:
+    """Validation métier simple. Retourne une liste de messages d'erreur."""
+    errors = []
+
+    if len(df) == 0:
+        errors.append("La lithologie est vide (aucune couche définie).")
+        return errors
+
+    z_prev = float(z1_sup_value)
+    for i, row in df.iterrows():
+        zi = row["zinf"]
+        if pd.isna(zi):
+            errors.append(f"Ligne {i+1} : z_inf manquant.")
+            continue
+
+        # Épaisseur positive : zinf < zsup
+        if float(zi) >= z_prev:
+            errors.append(
+                f"Ligne {i+1} : z_inf = {float(zi):.2f} doit être inférieur au z_sup de la couche ({z_prev:.2f})."
+            )
+
+        # alpha dans [0,1]
+        a = float(row["alpha"])
+        if not (0.0 <= a <= 1.0):
+            errors.append(f"Ligne {i+1} : alpha = {a:.3f} hors intervalle [0 ; 1].")
+
+        z_prev = float(zi)
+
+    return errors
+
+def soils_equal_for_status(df_edit: pd.DataFrame, df_applied: pd.DataFrame) -> bool:
+    """Compare édition vs appliqué après normalisation (pour afficher le bon statut)."""
+    try:
+        a = normalize_soils_df(df_edit)
+        b = normalize_soils_df(df_applied)
+
+        # Harmonisation stricte des types pour comparer proprement
+        for c in ["zinf", "pf", "pl", "Em", "alpha"]:
+            a[c] = pd.to_numeric(a[c], errors="coerce")
+            b[c] = pd.to_numeric(b[c], errors="coerce")
+
+        for c in ["name", "curve", "type_frot", "type_pointe"]:
+            a[c] = a[c].fillna("").astype(str)
+            b[c] = b[c].fillna("").astype(str)
+
+        return a.reset_index(drop=True).equals(b.reset_index(drop=True))
+    except Exception:
+        return False
+
+# Initialisation de la version "appliquée"
 if "soil_df" not in st.session_state:
     st.session_state["soil_df"] = default_soils()
 
+# Tableau de saisie
 edited = st.data_editor(
-    st.session_state.soil_df,
-    num_rows = "dynamic",
-    use_container_width = True,
-    column_config = {
+    st.session_state["soil_df"],
+    key="soil_editor",
+    num_rows="dynamic",
+    width="stretch",
+    column_config={
         "name": st.column_config.TextColumn("Description", required=True),
         "curve": st.column_config.SelectboxColumn(
             "Courbe",
@@ -200,30 +339,53 @@ edited = st.data_editor(
         "Em": st.column_config.NumberColumn("Em [MPa]", format="%.1f", min_value=0.0, step=0.1),
         "alpha": st.column_config.NumberColumn("α", format="%.2f", min_value=0.0, max_value=1.0, step=0.01),
     },
-    key = "soil_editor",
 )
 
-# Nettoyage rapide (types + drop lignes vides)
-df = edited.copy()
-for c in ["zinf","pf","pl","Em","alpha"]:
-    df[c] = pd.to_numeric(df[c], errors="coerce")
-# si ligne vide --> Drop
-df = df.dropna(subset=["zinf", "pf", "pl", "Em", "alpha"], how="all").reset_index(drop=True)
+# Statut édition vs appliqué
+is_applied = soils_equal_for_status(edited, st.session_state["soil_df"])
 
-st.session_state["soil_df"] = df
+with ctl2:
+    st.markdown("<div style='height: 28px'></div>", unsafe_allow_html=True)
+    button_label = "✅ Lithologie à jour" if is_applied else "⚠️ Appliquer la lithologie"
+    apply_clicked = st.button(button_label, width="stretch", disabled=is_applied)
 
+# Message d'état (plus utile que le tableau appliqué)
+if is_applied:
+    st.success("✅ Lithologie appliquée (les calculs utilisent bien la saisie actuelle).")
+else:
+    st.warning("⚠️ Modifications non appliquées. Cliquez sur **Appliquer** pour mettre à jour les calculs.")
+
+st.caption(f"{len(st.session_state['soil_df'])} couche(s) appliquée(s) • z1_sup = {float(z1_sup):.2f} NGF")
+
+# Application explicite de la lithologie
+if apply_clicked:
+    df_candidate = normalize_soils_df(edited)
+    errors = validate_soils_df(df_candidate, z1_sup)
+
+    if errors:
+        for msg in errors:
+            st.error(msg)
+    else:
+        st.session_state["soil_df"] = df_candidate
+        st.toast("Lithologie appliquée ✅")
+        st.rerun()
+
+# -------------------------------------------------------------------
+# Construction de la liste couches_sols (utilisée pour les calculs)
+# -------------------------------------------------------------------
 couches_sols = []
-z = z1_sup
+z = float(z1_sup)
+
 for row in st.session_state["soil_df"].to_dict("records"):
     sol = Soil(
         name=row["name"],
         level_sup=z,
         level_inf=float(row["zinf"]),
         courbe_frottement=row["curve"],
-        pf=float(row["pf"] or 0.0),
-        pl=float(row["pl"] or 0.0),
-        Em=float(row["Em"] or 0.0),
-        alpha=float(row["alpha"] or 0.0),
+        pf=float(row["pf"]),
+        pl=float(row["pl"]),
+        Em=float(row["Em"]),
+        alpha=float(row["alpha"]),
         friction_type=row["type_frot"],
         end_type=row["type_pointe"],
     )
@@ -233,7 +395,6 @@ for row in st.session_state["soil_df"].to_dict("records"):
 st.divider()
 
 
-
 ###  -------------------  Appel du bouton de sauvegarde  ------------------- ###
 
 persistence_ui()
@@ -241,12 +402,11 @@ persistence_ui()
 
 ###  ------------------------- Définition du Pieu  ------------------------- ###
 
-
 # Pieu
 st.sidebar.title('Définition du pieu')
 level_top = st.sidebar.number_input("Niveau supérieur du pieu [NGF]", key="pile_top")
 level_bot = st.sidebar.number_input("Niveau inférieur du pieu [NGF]", key="pile_bot")
-categorie = st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", min_value=1, step=1, key="pile_cat")
+categorie = int(st.sidebar.number_input("Catégorie du pieu au sens du tableau A1:", min_value=1, step=1, key="pile_cat"))
 Eb = st.sidebar.number_input("Module de Young du pieu [MPa]", key="pile_Eb")
 pieu_dp = st.sidebar.number_input("Diamètre équivalent du pieu pour l'effort de pointe [mm]", key="pile_dp")
 pieu_ds = st.sidebar.number_input("Diamètre équivalent du pieu pour le frottement [mm]", key="pile_ds")
@@ -278,13 +438,15 @@ with colA:
     )
 with colB:
     st.subheader('Paramètres de calculs')
+    ple = round(pieu.ple_etoile, 3)
+    Def = round(pieu.hauteur_encastrement_effective, 3)
     st.markdown(
         f"""
-    | Description                            |               |                                                   |
-    |:---                                    |---:           |---:                                               |
-    | Pression limite nette équivalente :    | $p_{{le*}}$ = | {round(pieu.ple_etoile, 3)} MPa                   |
-    | Hauteur d'encastrement effective :     | $D_{{ef}}$ =  | {round(pieu.hauteur_encastrement_effective, 3)} m |
-    | Facteur de portance pressiométrique :  | $k_{{p}}$ =   | {pieu.kp_util}                                    |
+    | Description                            |               |                 |
+    |:---                                    |---:           |---:             |
+    | Pression limite nette équivalente :    | $p_{{le*}}$ = | {ple} MPa       |
+    | Hauteur d'encastrement effective :     | $D_{{ef}}$ =  | {Def} m         |
+    | Facteur de portance pressiométrique :  | $k_{{p}}$ =   | {pieu.kp_util}  |
     """
     )
 
@@ -416,7 +578,7 @@ if tog_tass == True:
         fig1.layout.title.text = "Déplacement vertical en tête de pieu"
         fig1.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig1.layout.yaxis.title = "δz [mm]"
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, width="stretch")
 
     with col2:
         fig2 = go.Figure()
@@ -440,7 +602,7 @@ if tog_tass == True:
         fig2.layout.title.text = "Courbe de raideur axiale en tête de pieu"
         fig2.layout.xaxis.title = "Charge vertical en tête de pieu [kN]"
         fig2.layout.yaxis.title = "Kz [MN/ml]"
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width="stretch")
 
 st.divider()
 
@@ -458,7 +620,7 @@ if tog_equ == True:
         "Charge verticale en tête de pieu [kN] :",
         min_value=resistance_mini,
         max_value=resistance_maxi,
-        value=1500,
+        value=int(st.session_state.get("q_target", 1000)),
         key="q_target"
     )
 
@@ -515,7 +677,7 @@ if tog_equ == True:
             )
         )
         fig1.layout.title.text = "Tassement pieu/sol"
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, width="stretch")
 
 
     with col2:
@@ -537,7 +699,7 @@ if tog_equ == True:
             )
         )
         fig2.layout.title.text = "Frottement pieu/sol"
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width="stretch")
 
     with col3:
         fig3 = go.Figure()
@@ -558,7 +720,7 @@ if tog_equ == True:
             )
         )
         fig3.layout.title.text = "Effort dans le pieu"
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, width="stretch")
 
 
 st.divider()
@@ -631,7 +793,7 @@ if tog_transversal == True:
             )
         )
         fig1.layout.title.text = "Moment fléchissant"
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, width="stretch")
 
     with col2:
         fig2 = go.Figure()
@@ -652,7 +814,7 @@ if tog_transversal == True:
             )
         )
         fig2.layout.title.text = "Effort tranchant"
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width="stretch")
 
     with col3:
         fig3 = go.Figure()
@@ -673,5 +835,4 @@ if tog_transversal == True:
             )
         )
         fig3.layout.title.text = "Déplacement horizontal"
-        st.plotly_chart(fig3, use_container_width=True)
-
+        st.plotly_chart(fig3, width="stretch")
