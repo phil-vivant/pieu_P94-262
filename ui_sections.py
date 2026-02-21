@@ -213,8 +213,11 @@ def lithology_ui():
         warning_msg += " **Appliquer** pour mettre à jour les calculs."
         st.warning(warning_msg)
 
-    msg = f"{len(st.session_state['soil_df'])} couche(s) appliquée(s)"
-    msg += f" • z1_sup = {float(z1_sup):.2f} NGF"
+    n = len(st.session_state['soil_df'])
+    if n <= 1:
+        msg = f"{n} couche appliquée • z1_sup = {float(z1_sup):.2f} NGF"
+    else:
+        msg = f"{n} couches appliquées • z1_sup = {float(z1_sup):.2f} NGF"
     st.caption(msg)
 
     if apply_clicked:
